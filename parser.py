@@ -4,6 +4,7 @@ import probQlexer as lexer
 tokens = lexer.tokens
 precedence = (
     ('left', 'PLUS', 'MINUS'),
+
 )
 
 # A BASIC program is a series of statements.  We represent the program as a
@@ -25,26 +26,26 @@ _entities = {'coin' : coin_entity , 'dice' : dice_entity }
 _alias_list = {}
 
 def p_program(p):
-    '''program : program statement
-               | statement'''
+    '''program : program statement '''
+    p[1] += [p[2]] + ["@@@@@@@@@@@@@@@@@@@@@2"]
+    p[0] = p[1]
 
-    if len(p) == 3:
-        p[0] = p[1].append(p[1])
-    elif len(p) == 2:
-        p[0] = [p[1]]
+def p_program_single(p):
+    '''program : statement '''
+    p[0] = [ p[1] ]
 
-# This catch-all rule is used for any catastrophic errors.  In this case,
-# we simply return nothing
+
+
 
 # Format of all BASIC statements.
 
-def p_statement(p):
-    '''statement : statement entity '''
-    p[0] = p[1].append(p[2])
-
-def p_statement_single(p):
+def p_statement_entity_def(p):
     '''statement : entity '''
-    p[0] = [ p[1] ]
+    p[0] = p[1]
+
+def p_statement_entity_assignment(p):
+    ''' statement : entity_assignment '''
+    p[0] = p[1]
 
 ################################################################################
 ############################  ENTITY DEF   #####################################
@@ -68,7 +69,7 @@ def p_entity_def_wo_params(p):
     ############ ---------------------------------------------------------------
 
 def p_flag_action(p):
-    ''' flag_action : LEFTSQRBRACKET FLAG ASSIGNMENT IDEN COMMA ROLL ASSIGNMENT IDEN RIGHTSQRBRACKET '''
+    ''' flag_action : LEFTSQRBRACKET FLAG ASSIGNMENT IDEN COMMA ACTION ASSIGNMENT IDEN RIGHTSQRBRACKET '''
     p[0] = {'flag' : p[4], 'action' : p[8]}
 
 def p_flag_action_without_identifier(p):
@@ -171,7 +172,91 @@ def p_entity_prop_prob_atom(p):
 ################################################################################
 ############################  ENTITY Initialize   ##############################
 ################################################################################
+def p_entity_initialize(p):
+    ''' entity_initialize : entity_name ei_flag ei_params ei_number '''
+    p[0]  = {'entity': p[1], 'flags': p[2], 'info': p[3] , 'num' : p[4] }
 
+def p_entity_name(p):
+    ''' entity_name : IDEN '''
+    p[0] = p[1]
+
+def p_empty(p):
+    'empty :'
+    pass
+
+######################-----------------------------------######################
+def p_ei_flag(p):
+    ''' ei_flag : LEFTSQRBRACKET IDEN RIGHTSQRBRACKET '''
+    p[0] = p[2]
+
+def p_ei_flag_empty(p):
+    ''' ei_flag : empty '''
+    p[0] = 'default'
+
+######################-----------------------------------######################
+
+def p_ei_params(p):
+    ''' ei_params : LEFTSMALLBRACKET  float_list  RIGHTSMALLBRACKET
+                 |  LEFTSMALLBRACKET entity_prop RIGHTSMALLBRACKET
+    '''
+    p[0] = p[2]
+def p_ei_params_empty(p):
+    ''' ei_params : empty '''
+    p[0] = 'empty'
+
+def p_float_list(p):
+    ''' float_list :  float_list COMMA FLOAT
+                    | float_list COMMA NUMBER
+    '''
+    p[1] += [p[3]]
+    p[0] = p[1]
+
+def p_float_list_single(p):
+    ''' float_list : FLOAT
+                   | NUMBER
+    '''
+    p[0] = [ p[1] ]
+
+def p_ei_number(p):
+    ''' ei_number : LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE '''
+    p[0] = p[2]
+
+################################################################################
+############################     ENTITY Action    ##############################
+################################################################################
+def p_entity_action(p):
+    ''' entity_action : ALIAS DOT IDEN LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+                      | ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+    '''
+    p[0] = {'entity' : p[1], 'action' : p[3], 'num' : p[5]}
+
+def p_entity_action_e(p):
+    ''' entity_action : entity_initialize DOT IDEN LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+                      | entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+
+     '''
+    p[0] = {'entity' : p[1], 'action' : p[3], 'num' : p[5]}
+
+def p_option_number(p):
+    ''' option_number : NUMBER '''
+    p[0] = p[1]
+
+def p_option_number_wo(p):
+    ''' option_number : empty '''
+    p[0] = 1
+
+
+################################################################################
+############################     ENTITY Assignment    ##########################
+################################################################################
+
+def p_entity_assignment(p):
+    ''' entity_assignment : ALIAS ASSIGNMENT entity_initialize
+                          | ALIAS ASSIGNMENT entity_action
+    '''
+    global _alias_list
+    _alias_list[p[1]] = p[3]
+    p[0] = {p[1] : p[3] }
 
 # Catastrophic error handler
 
@@ -186,11 +271,17 @@ def parse(data, debug=0):
     return p
 
 source = '''
-entity dice[djfd,fjdk](H,K){ 12::dkfjjf;13::df }
+entity dice[flag=fair, action=rollu]{
+	0.16::1; 0.16::2; 0.16::3; 0.16::4; 0.16::5; 0.16::6
+}
+X = dice[fair]{5}
+Y = X.roll(5)
+X = dice[fair]{5}
+Y = X.roll(5)
 '''
-print(parse(source,0))
+print(parse(source,1))
 
 
-import pprint
-pp = pprint.PrettyPrinter(indent=4)
-pp.pprint(_entities)
+# import pprint
+# pp = pprint.PrettyPrinter(indent=4)
+# pp.pprint(_entities)
