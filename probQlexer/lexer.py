@@ -45,7 +45,10 @@ reserved = {
     'equalAtleast' : 'EQUALATLEAST',
     'equalFew' : 'EQUALFEW',
     'equalAll' : 'EQUALALL',
-    'equalAny' : 'EQUALANY'
+    'equalAny' : 'EQUALANY',
+    'and' : 'AND',
+    'or' : 'OR',
+    'not' : 'NOT'
 }
 
 tokens = tokens + list(reserved.values())

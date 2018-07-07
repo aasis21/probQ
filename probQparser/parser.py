@@ -12,6 +12,7 @@ solver = blackbox()
 
 precedence = (
     ('left', 'PLUS', 'MINUS'),
+    ('left', 'AND', 'OR', 'NOT')
 
 )
 
@@ -204,34 +205,88 @@ def p_option_number_wo(p):
 ############################     Probability    ##############################
 ################################################################################
 
+
 def p_query_wrap(p):
-    ''' query_wrap : QUERY LEFTSMALLBRACKET query RIGHTSMALLBRACKET '''
-    solver.add_query(p[3])
+    ''' query_wrap : QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET '''
+    #solver.add_query(p[3])
+    for each in p[3]:
+        print(each,'\n\n')
     p[0] = p[3]
 
-def p_query(p):
-    ''' query : q_equal_atom_3
-              | q_equal_atom_2
-     '''
+
+def p_q_expr(p):
+    ''' q_expr : q_term_list OR q_term '''
+    p[0] = p[1] + [p[3]]
+def p_q_expr_s(p):
+    ''' q_expr : q_term '''
     p[0] = p[1]
 
+def p_q_term(p):
+    ''' q_term : q_factor_list AND q_factor '''
+    p[0] =p[1] + [p[3]]
+
+
+def p_q_term_s(p):
+    ''' q_term : q_factor '''
+
+    p[0] = p[1]
+
+def p_q_term_list(p):
+    ''' q_term_list : q_term_list OR q_term '''
+    p[0] = p[1] + [p[3]]
+
+def p_q_term_list_s(p):
+    ''' q_term_list : q_term '''
+
+    p[0] = [p[1]]
+
+
+def p_q_factor_a(p):
+    ''' q_factor : q_atom '''
+    p[0] = p[1]
+
+def p_q_factor_n(p):
+    ''' q_factor : NOT q_factor '''
+    p[0] = p[2]
+
+def p_q_factor_e(p):
+    ''' q_factor :  LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET '''
+    p[0] = p[2]
+
+def p_q_factor_list(p):
+    ''' q_factor_list : q_factor_list OR q_factor '''
+    p[0] = p[1] + [p[3]]
+
+def p_q_factor_list_s(p):
+    ''' q_factor_list : q_factor '''
+    p[0] =  [p[1]]
+
+
+def p_q_atom(p):
+    ''' q_atom : q_equal_atom_3
+               | q_equal_atom_2
+    '''
+    p[0] = p[1]
+
+
+
 def p_query_iden_3(p):
-    ''' query_iden_3 : EQUALATMOST
+    ''' q_iden_3 : EQUALATMOST
                      | EQUALATLEAST
                      | EQUALFEW
     '''
     p[0] = p[1]
 
 def p_query_iden_2(p):
-    ''' query_iden_2 : EQUALALL
+    ''' q_iden_2 : EQUALALL
                      | EQUALANY
     '''
     p[0] = p[1]
 
 
 def p_q_equal_atom3(p):
-    ''' q_equal_atom_3 : query_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
-                        | query_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    ''' q_equal_atom_3 : q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+                        | q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
     '''
     alias = []
     for al in p[5]:
@@ -240,8 +295,8 @@ def p_q_equal_atom3(p):
     p[0] = query_atom
 
 def p_q_equal_atom2(p):
-    ''' q_equal_atom_2 : query_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
-                        | query_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    ''' q_equal_atom_2 : q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+                        | q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
     '''
     alias = []
     for al in p[3]:
@@ -271,7 +326,6 @@ def p_q_alias_concat(p):
         p[0] = p[1]
     elif size == 2:
         p[0] = [p[1]]
-
 
 
 

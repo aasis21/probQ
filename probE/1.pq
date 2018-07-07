@@ -10,7 +10,12 @@
  Z = student(1/3,2/3){1}.roll()
 
 
-probability( equalAtleast( 2, [ X | Y | Z ] , success))
+probability(
+            ( equalAtleast( 2, [ X | Y | Z ] , success) and equalAtmost( 2, X , fail) or equalAll( X , fail) )
+            or ( equalAtmost( 2, X , fail) or equalAll( X , fail) )
+            or ( equalAtmost( 2, X , fail) or equalAll( X , fail) )
+
+            )
 #  entity student[S](S :: success; 1-S::fail)
 
 
