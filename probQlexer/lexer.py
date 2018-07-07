@@ -13,6 +13,7 @@ tokens = [
     'DOT',
     'SEMICOLON',
     'COLON',
+    'BAR',
     'DOUBLECOLON',
     'LEFTSQRBRACKET',
     'RIGHTSQRBRACKET',
@@ -22,6 +23,8 @@ tokens = [
     'RIGHTCURLYBRACE',
 
     'NUMBER',
+
+    'FRACTION',
     'FLOAT',
     'PLUS',
     'MINUS',
@@ -35,8 +38,14 @@ reserved = {
     'flag': 'FLAG',
     'action' : 'ACTION',
     'pick' : 'PICK',
-    'Probability' : 'QUERY',
+    'probability' : 'QUERY',
     'evidence' : 'EVIDENCE',
+    'equal' : 'EQUAL',
+    'equalAtmost' : 'EQUALATMOST',
+    'equalAtleast' : 'EQUALATLEAST',
+    'equalFew' : 'EQUALFEW',
+    'equalAll' : 'EQUALALL',
+    'equalAny' : 'EQUALANY'
 }
 
 tokens = tokens + list(reserved.values())
@@ -49,7 +58,7 @@ t_DOT = r'\.'
 t_SEMICOLON = r';'
 t_DOUBLECOLON = r'::'
 t_COLON = r':'
-
+t_BAR = r'\|'
 t_LEFTSQRBRACKET = r'\['
 t_RIGHTSQRBRACKET = r'\]'
 t_LEFTSMALLBRACKET = r'\('
@@ -78,8 +87,18 @@ t_PLUS = r'\+'
 t_MINUS = r'\-'
 # A regular expression rule with some action code
 # Note addition of self parameter since we're in a class
+
 def t_FLOAT(t):
     r'(-)?(\d+\.\d+)'
+    return t
+
+def t_FRACTION(t):
+    r'[1-9][0-9]*\/[1-9][0-9]*'
+    t.type = 'FLOAT'
+    f  = str(t.value)
+    num,den = f.split( '/' )
+    result = int(num)/float(den)
+    t.value = str(result)
     return t
 
 def t_NUMBER(t):

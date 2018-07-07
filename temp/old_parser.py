@@ -149,7 +149,7 @@ def p_entity_prop_num_atom(p):
     '''
     p[0] = {p[3] :  {'num' : p[1]} }
 
-def p_entity_prop_brob(p):
+def p_entity_prop_prob(p):
     ''' entity_prop_prob : entity_prop_prob SEMICOLON entity_prop_prob_atom '''
     p[0] = { **p[1], **p[3]}
 
@@ -271,8 +271,8 @@ def parse(data, debug=0):
     return p
 
 source = '''
-entity dice[flag=fair, action=rollu]{
-	0.16::1; 0.16::2; 0.16::3; 0.16::4; 0.16::5; 0.16::6
+entity dice[flag=fair, action=rollu](H,T){
+	H ::1; 0.16::2; 0.16::3; 0.16::4; 0.16::5; 0.16::6
 }
 X = dice[fair]{5}
 Y = X.roll(5)
