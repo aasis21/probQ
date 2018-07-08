@@ -20,13 +20,13 @@ with open(os.path.join(script_dir, input_file), 'r') as f:
 if source == '':
     print('EMPTY FILE')
 print('----------------------------------------------------------------------------------')
-print(source)
+#print(source)
 parse(source,0)
 print('----------------------------------------------------------------------------------')
 print('------------------------------- PROBLOG CODE--------------------------------------')
 print('----------------------------------------------------------------------------------')
 code = solver.get_code()
-print(code)
+#print(code)
 
 output_file = input_file.split('.')[0] + '.pl'
 print('\n>>>>>>>>>> writing output file ' , output_file)

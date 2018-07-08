@@ -277,66 +277,98 @@ def p_q_atom(p):
                | q_equal_atom_2
                | me_atom
     '''
+    print(p[1])
     p[0] = QNode("q_atom", p[1])
 
 ################################ Keep  adding new atom here ####################
-
-def p_query_iden_3(p):
-    ''' q_iden_3 : EQUALATMOST | EQUALATLEAST | EQUALFEW '''
-    p[0] = p[1]
-
-def p_query_iden_2(p):
-    ''' q_iden_2 : EQUALALL | EQUALANY '''
-    p[0] = p[1]
 
 
 def p_q_equal_atom3(p):
     ''' q_equal_atom_3 : q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
                         | q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
     '''
-    alias = []
-    for al in p[5]:
-        alias += [_alias_list[al]]
-    query_atom = {'construct' : p[1],'params_count' : 3 ,'number':p[3] , 'equal' : p[7],'alias_list' : alias}
-    p[0] = query_atom
+
+    query_atom = {'construct' : p[1],'params_count' : 3 ,'number':p[3] , 'equal' : p[7],
+                  'alias_list' : p[5]['alias_list'],
+                  'list' : p[5]['list'] ,
+                  'list_len' : p[5]['list_len']
+                  }
+    p[0] = {'type': 'nl', 'body' :query_atom}
 
 def p_q_equal_atom2(p):
     ''' q_equal_atom_2 : q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
                         | q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
     '''
-    alias = []
-    for al in p[3]:
-        alias += [_alias_list[al]]
-    query_atom = {'construct' : p[1],'params_count' : 2 ,'number': 0 , 'equal' : p[5],'alias_list' : alias}
-    p[0] = query_atom
+    query_atom = {'construct' : p[1],'params_count' : 2 ,'number': 0 , 'equal' : p[5],
+                  'alias_list' : p[3]['alias_list'],
+                  'list' : p[3]['list'] ,
+                  'list_len' : p[3]['list_len']
+                  }
+    p[0] = {'type': 'nl', 'body' :query_atom}
+
+
+def p_query_iden_3(p):
+    ''' q_iden_3 : EQUALATMOST
+                | EQUALATLEAST
+                | EQUALFEW '''
+    p[0] = p[1]
+
+def p_query_iden_2(p):
+    ''' q_iden_2 : EQUALALL
+                | EQUALANY '''
+    p[0] = p[1]
 
 
 def p_q_alias_concat_wrap(p):
-    ''' q_alias_concat_wrap : ALIAS
+    ''' q_alias_concat_wrap : alias_slice
                         | LEFTSQRBRACKET q_alias_concat RIGHTSQRBRACKET
     '''
     size = len(p)
     if size == 4:
         p[0] = p[2]
     elif size == 2:
-        p[0] = [p[1]]
+        p[0] = {'list': p[1]['list'], 'alias_list' : [p[1]['name']], 'list_len' : p[1]['len'] }
 
 
 def p_q_alias_concat(p):
-    ''' q_alias_concat : q_alias_concat BAR  ALIAS
-                        | ALIAS
+    ''' q_alias_concat : q_alias_concat BAR  alias_slice
+                        | alias_slice
     '''
     size = len(p)
     if size == 4:
-        p[1] += [p[3]]
-        p[0] = p[1]
+        l = p[1]['list'] + ' , ' + p[3]['list']
+        a_list = p[1]['alias_list'] + [p[3]['name']]
+        a_len = p[1]['list_len'] + p[3]['len']
+        p[0] = {'list': l , 'alias_list' : a_list, 'list_len': a_len }
+
     elif size == 2:
-        p[0] = [p[1]]
+        p[0] = {'list': p[1]['list'], 'alias_list' : [p[1]['name']], 'list_len' : p[1]['len']  }
+
+
+def p_alias_slice(p):
+    ''' alias_slice : ALIAS
+                    | ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET'''
+    alias = _alias_list[p[1]]
+    a_name = str(p[1])
+    if len(p) == 2:
+        res = ''
+        a_len = alias['length']
+        for i in range(1, a_len+1 ):
+            res = res + a_name + str(i) + ', '
+    if len(p) == 7:
+        res = ''
+        a_len = int(p[5]) - int(p[3]) + 1
+        for i in range(p[3], p[5] ):
+            res = res + a_name + str(i) + ', '
+
+    res = res.strip(', ')
+    p[0] = {'list' : res, 'name' : a_name, 'len' : a_len }
 
 ############################### ME :- constructer  :-  me_atom  ################
-def me_atom(p):
+def p_me_atom(p):
     ''' me_atom : a_expression_atom '''
-    res = {'type' : 'me', 'body': p[0]}
+    res = {'type' : 'me', 'body': p[1]}
+    p[0] = res
 
 ############################### ME :- a_expression_atom ########################
 def p_a_expr_atom_e(p):
@@ -388,7 +420,7 @@ def p_term_factor(p):
 
 def p_factor_num(p):
     ''' a_factor : NUMBER
-              | ALIAS LEFTSQRBRACKET NUMBER LEFTSQRBRACKET
+              | ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
     '''
     if len(p) == 2:
         p[0] = str(p[1])
@@ -402,8 +434,8 @@ def p_factor_expr(p):
 ############################### ME END  ########################################
 
 # Error rule for syntax errors
-def p_error(p):
-    print("Syntax error in input!")
+#def p_error(p):
+#    print("Syntax error in input!")
 
 
 

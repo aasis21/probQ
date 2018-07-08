@@ -128,7 +128,7 @@ def q_add_atom(q_atom,q_list,q_alias):
     if q_type == 'ml':
         q_list.append(body)
         return
-    elif q_type = 'nl':
+    elif q_type == 'nl':
         construct = body['construct']
         params_count = body['params_count']
 
