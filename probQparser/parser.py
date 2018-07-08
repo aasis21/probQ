@@ -208,10 +208,10 @@ def p_option_number_wo(p):
 
 def p_query_wrap(p):
     ''' query_wrap : QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET '''
-    #solver.add_query(p[3])
-    print("bjdfjjdhjhjkjhjkhkjddfkdj")
+    solver.add_query(p[3])
 
-    in_order(p[3])
+
+    #in_order(p[3])
     p[0] = p[3]
 
 ################################################################################
@@ -277,7 +277,6 @@ def p_q_atom(p):
                | q_equal_atom_2
                | me_atom
     '''
-    print(p[1])
     p[0] = QNode("q_atom", p[1])
 
 ################################ Keep  adding new atom here ####################
@@ -430,6 +429,7 @@ def p_factor_num(p):
 def p_factor_expr(p):
     'a_factor : LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET'
     p[0] = '( ' + str(p[2]) + ' )'
+
 
 ############################### ME END  ########################################
 

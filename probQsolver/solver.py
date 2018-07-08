@@ -114,20 +114,36 @@ def get_action_terms_and_list(aliases):
     return q_actions + ', L = [{}]'.format(q_list)
 
 
-def q_tree_inorder(q_tree,q_list,q_alias):
+def q_tree_inorder(q_tree,q_alias):
     if(q_tree.q_type == "q_atom"):
-        # do_stuff
-        return
-    for child in q_tree.children:
-        q_tree_inorder(child, q_list,q_alias)
+        q_atom_str = q_add_atom(q_tree.q_atom,q_alias)
+        return q_atom_str
 
-def q_add_atom(q_atom,q_list,q_alias):
+    query_str = ''
+    for child in q_tree.children:
+        q_atom_str = q_tree_inorder(child, q_alias)
+        if(q_tree.q_type == "and"):
+            query_str = query_str + q_atom_str + ' , '
+        elif(q_tree.q_type == "or"):
+            query_str = query_str + q_atom_str + ' ; '
+        elif(q_tree.q_type == "not"):
+            query_str = ' \+ ' + query_str + q_atom_str
+        else:
+            return("# SOMTHING BROKE")
+
+    query_str = query_str.strip(',; ')
+    query_str = '( ' + query_str + ' )'
+    return query_str
+
+
+def q_add_atom(q_atom,q_alias):
     q_type = q_atom['type']
     body = q_atom['body']
 
-    if q_type == 'ml':
-        q_list.append(body)
-        return
+    if q_type == 'me':
+        query = '( ' + body + ' )'
+        # to do parse body to get alias list
+        return query
     elif q_type == 'nl':
         construct = body['construct']
         params_count = body['params_count']
@@ -135,13 +151,8 @@ def q_add_atom(q_atom,q_list,q_alias):
         num = body['number']
         equal = body['equal']
 
-        alias_list = query['alias_list']
-        for a in alias_list:
-            q_alias.append(a)
-
         iden = str(randint(1000,9999))
-        query = '( count({},{}, C{})'.format(a_list,equal,iden)
-        query = query + ' , C{} = {}'.format(iden, equal)
+        query = '( count([{}],{}, C{})'.format(body['list'],equal,iden)
         if construct == 'equalAtmost':
             query = query + ' , C{} =< {} )'.format(iden, num)
         if construct == 'equalAtleast':
@@ -149,9 +160,15 @@ def q_add_atom(q_atom,q_list,q_alias):
         if construct == 'equalFew':
             query = query + ' , C{} = {} )'.format(iden,num)
         if construct == 'equalAll':
-            query = query + ' , C{} = {} )'.format(iden,6)
+            query = query + ' , C{} = {} )'.format(iden,body['list_len'])
         if construct == 'equalAny':
             query = query + ' , C{} >= 1 )'.format(iden)
+
+        alias_list = body['alias_list']
+        q_alias += alias_list
+
+        return query
+
 
 
 
@@ -178,13 +195,11 @@ class blackbox:
         return action_layout[0]
 
     def add_query(self, query_tree):
-        required_alias = []
-        query = [] # list of strings, will be stiched later
-
-
-
-
-        self.query[query_name] = query
+        q_alias = []
+        q_list = [] # list of strings, will be stiched later
+        query_core = q_tree_inorder(query_tree,q_alias)
+        print(query_core)
+        print(q_alias)
 
     def get_code(self):
         code = ''
