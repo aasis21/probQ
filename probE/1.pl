@@ -1,13 +1,14 @@
 P_Student_success :: student_roll(L, P_Student_success, P_Student_fail, D, success); P_Student_fail :: student_roll(L, P_Student_success, P_Student_fail, D, fail) :- student(L, P_Student_success, P_Student_fail, D).
 
-student(f, 0.2, 0.8, D ) :- between(1, 3, D).
-student(f, 0.25, 0.75, D ) :- between(1, 2, D).
+student(f, 0.2, 0.8, D ) :- between(1, 1, D).
+student(f, 0.25, 0.75, D ) :- between(1, 1, D).
 student(f, 0.3333333333333333, 0.6666666666666666, D ) :- between(1, 1, D).
 
-alias_X(X1, X2, X3) :- student_roll(f, 0.2, 0.8, 1, X1 ), student_roll(f, 0.2, 0.8, 2, X2 ), student_roll(f, 0.2, 0.8, 3, X3 ) .
-alias_Y(Y1, Y2) :- student_roll(f, 0.25, 0.75, 1, Y1 ), student_roll(f, 0.25, 0.75, 2, Y2 ) .
 alias_Z(Z1) :- student_roll(f, 0.3333333333333333, 0.6666666666666666, 1, Z1 ) .
+alias_X(X1) :- student_roll(f, 0.2, 0.8, 1, X1 ) .
+alias_Y(Y1) :- student_roll(f, 0.25, 0.75, 1, Y1 ) .
 
+q(8250) :- alias_Z(Z1), alias_X(X1), alias_Y(Y1),  ( count([X1 , Y1 , Z1],success, C7470) , C7470 >= 2 ) . 
 
 
 

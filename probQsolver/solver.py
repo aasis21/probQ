@@ -53,7 +53,7 @@ def get_entity_layout(entity):
 
     entity_layout = entity_layout.strip('; ') + ' :- ' + e_iden_layout + '.'
 
-    # print(entity_layout)
+    print(entity_layout)
     return entity_layout
 
 def get_entity_instance(instance):
@@ -115,6 +115,9 @@ def get_action_terms_and_list(aliases):
 
 
 def q_tree_inorder(q_tree,q_alias):
+    '''
+    returns a core query string to be added in query
+    '''
     if(q_tree.q_type == "q_atom"):
         q_atom_str = q_add_atom(q_tree.q_atom,q_alias)
         return q_atom_str
@@ -180,6 +183,7 @@ class blackbox:
         self.entity_instances = []
         self.action ={}
         self.query = {}
+        self.action_def = {}
 
     def add_enitity(self,entity):
         entity_layout = get_entity_layout(entity)
@@ -192,14 +196,21 @@ class blackbox:
     def add_entity_action(self,action):
         action_layout = get_entity_action(action)
         self.action[action['alias']] = action_layout[1]
+        self.action_def[action['alias']] = action_layout[0]
         return action_layout[0]
 
     def add_query(self, query_tree):
         q_alias = []
-        q_list = [] # list of strings, will be stiched later
         query_core = q_tree_inorder(query_tree,q_alias)
-        print(query_core)
-        print(q_alias)
+        q_alias_unique = list(set(q_alias))
+        query_alias_def = ''
+        for al in q_alias_unique:
+            query_alias_def += self.action_def[str(al)] + ', '
+
+        query_name = str(randint(1000,9999))
+        query_str = 'q({}) :- {} {} . '.format(query_name,query_alias_def,query_core)
+        self.query[query_name] = query_str
+        return
 
     def get_code(self):
         code = ''
