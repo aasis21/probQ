@@ -1,7 +1,7 @@
 from ply import yacc
 import probQlexer.lexer as lexer
 from collections import OrderedDict as odict
-from probQsolver.solver import blackbox
+from probQsolver.solver import blackbox , QNode, in_order
 import os
 import sys
 import time
@@ -202,33 +202,42 @@ def p_option_number_wo(p):
 
 
 ################################################################################
-############################     Probability    ##############################
+############################     Probability  QUERY  ###########################
 ################################################################################
 
 
 def p_query_wrap(p):
     ''' query_wrap : QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET '''
     #solver.add_query(p[3])
-    for each in p[3]:
-        print(each,'\n\n')
+    print("bjdfjjdhjhjkjhjkhkjddfkdj")
+
+    in_order(p[3])
     p[0] = p[3]
 
+################################################################################
 
 def p_q_expr(p):
     ''' q_expr : q_term_list OR q_term '''
-    p[0] = p[1] + [p[3]]
+    root = QNode("or","or")
+    for e_ch in p[1]:
+        root.add_child(e_ch)
+    root.add_child(p[3])
+    p[0] = root
+
 def p_q_expr_s(p):
     ''' q_expr : q_term '''
     p[0] = p[1]
 
 def p_q_term(p):
     ''' q_term : q_factor_list AND q_factor '''
-    p[0] =p[1] + [p[3]]
-
+    root = QNode("and","and")
+    for e_ch in p[1]:
+        root.add_child(e_ch)
+    root.add_child(p[3])
+    p[0] = root
 
 def p_q_term_s(p):
     ''' q_term : q_factor '''
-
     p[0] = p[1]
 
 def p_q_term_list(p):
@@ -240,21 +249,22 @@ def p_q_term_list_s(p):
 
     p[0] = [p[1]]
 
-
 def p_q_factor_a(p):
     ''' q_factor : q_atom '''
     p[0] = p[1]
 
 def p_q_factor_n(p):
     ''' q_factor : NOT q_factor '''
-    p[0] = p[2]
+    root = QNode("not","not")
+    root.add_child(p[2])
+    p[0] = root
 
 def p_q_factor_e(p):
     ''' q_factor :  LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET '''
     p[0] = p[2]
 
 def p_q_factor_list(p):
-    ''' q_factor_list : q_factor_list OR q_factor '''
+    ''' q_factor_list : q_factor_list AND q_factor '''
     p[0] = p[1] + [p[3]]
 
 def p_q_factor_list_s(p):
@@ -265,22 +275,18 @@ def p_q_factor_list_s(p):
 def p_q_atom(p):
     ''' q_atom : q_equal_atom_3
                | q_equal_atom_2
+               | me_atom
     '''
-    p[0] = p[1]
+    p[0] = QNode("q_atom", p[1])
 
-
+################################ Keep  adding new atom here ####################
 
 def p_query_iden_3(p):
-    ''' q_iden_3 : EQUALATMOST
-                     | EQUALATLEAST
-                     | EQUALFEW
-    '''
+    ''' q_iden_3 : EQUALATMOST | EQUALATLEAST | EQUALFEW '''
     p[0] = p[1]
 
 def p_query_iden_2(p):
-    ''' q_iden_2 : EQUALALL
-                     | EQUALANY
-    '''
+    ''' q_iden_2 : EQUALALL | EQUALANY '''
     p[0] = p[1]
 
 
@@ -326,6 +332,78 @@ def p_q_alias_concat(p):
         p[0] = p[1]
     elif size == 2:
         p[0] = [p[1]]
+
+############################### ME :- constructer  :-  me_atom  ################
+def me_atom(p):
+    ''' me_atom : a_expression_atom '''
+    res = {'type' : 'me', 'body': p[0]}
+
+############################### ME :- a_expression_atom ########################
+def p_a_expr_atom_e(p):
+    ''' a_expression_atom : a_expression EQUAL a_expression '''
+    p[0] = p[1] + ' =:= ' + p[3]
+
+def p_a_expr_atom_ne(p):
+    ''' a_expression_atom : a_expression NOTEQUAL a_expression '''
+    p[0] = p[1] + ' =\= ' + p[3]
+
+def p_a_expr_atom_ge(p):
+    ''' a_expression_atom : a_expression GREATEREQUAL a_expression '''
+    p[0] = p[1] + ' >= ' + p[3]
+
+def p_a_expr_atom_g(p):
+    ''' a_expression_atom : a_expression GREATER a_expression '''
+    p[0] = p[1] + ' > ' + p[3]
+def p_a_expr_atom_le(p):
+    ''' a_expression_atom : a_expression LESSEQUAL a_expression '''
+    p[0] = p[1] + ' =< ' + p[3]
+
+def p_a_expr_atom_l(p):
+    ''' a_expression_atom : a_expression LESS a_expression '''
+    p[0] = p[1] + ' < ' + p[3]
+
+def p_a_expression_plus(p):
+    'a_expression : a_expression PLUS a_term'
+    p[0] = str(p[1]) + ' + ' +  str(p[3])
+
+def p_a_expression_minus(p):
+    'a_expression : a_expression MINUS a_term'
+    p[0] = str(p[1]) + ' - ' +  str(p[3])
+
+def p_a_expression_term(p):
+    'a_expression : a_term'
+    p[0] = str(p[1])
+
+def p_term_times(p):
+    'a_term : a_term TIMES a_factor'
+    p[0] = str(p[1]) + ' * ' +  str(p[3])
+
+def p_term_div(p):
+    'a_term : a_term DIVIDE a_factor'
+    p[0] = str(p[1]) + ' / ' +  str(p[3])
+
+def p_term_factor(p):
+    'a_term : a_factor'
+    p[0] = p[1]
+
+def p_factor_num(p):
+    ''' a_factor : NUMBER
+              | ALIAS LEFTSQRBRACKET NUMBER LEFTSQRBRACKET
+    '''
+    if len(p) == 2:
+        p[0] = str(p[1])
+    if len(p) == 5:
+        p[0] = str(p[1]) + str(p[3])
+
+def p_factor_expr(p):
+    'a_factor : LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET'
+    p[0] = '( ' + str(p[2]) + ' )'
+
+############################### ME END  ########################################
+
+# Error rule for syntax errors
+def p_error(p):
+    print("Syntax error in input!")
 
 
 

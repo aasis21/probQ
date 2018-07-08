@@ -23,11 +23,19 @@ tokens = [
     'RIGHTCURLYBRACE',
 
     'NUMBER',
+    'EQUAL',
+    'NOTEQUAL',
+    'GREATEREQUAL',
+    'GREATER',
+    'LESSEQUAL',
+    'LESS',
 
     'FRACTION',
     'FLOAT',
     'PLUS',
     'MINUS',
+    'TIMES',
+    'DIVIDE'
 ]
 
 # reserved words.
@@ -69,25 +77,19 @@ t_RIGHTSMALLBRACKET = r'\)'
 t_LEFTCURLYBRACE = r'\{'
 t_RIGHTCURLYBRACE = r'\}'
 
-# t_DIVISION = r'\/'
-# t_NOTEQUAL = r'!='
-# t_EQUAL = r'=='
-# t_NOT = r'!'
-# t_LEFTBRACE  = r'\{'
-# t_RIGHTBRACE = r'\}'
-# t_GREATEREQUAL = r'>='
-# t_GREATER = r'>'
-# t_LESSEQUAL = r'<='
-# t_LESS = r'<'
-# t_SUBSTRACTION = r'\-'
-# t_UMINUS = r'\-'
-# t_CONCAT = r'\+'
-# t_MULTIPLICATION = r'\*'
-# t_OR = r'(\|\|)|(OR)'
-# t_MODULO = r'%'
+
+t_NOTEQUAL = r'!='
+t_EQUAL = r'=='
+t_GREATEREQUAL = r'>='
+t_GREATER = r'>'
+t_LESSEQUAL = r'<='
+t_LESS = r'<'
+
 
 t_PLUS = r'\+'
 t_MINUS = r'\-'
+t_TIMES = r'\*'
+t_DIVIDE = r'\/'
 # A regular expression rule with some action code
 # Note addition of self parameter since we're in a class
 

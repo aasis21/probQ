@@ -1,6 +1,6 @@
 import sys
 import os
-
+from random import randint
 
 class entity:
 
@@ -9,6 +9,27 @@ class entity:
         self.params = entity['params']
         self.feature = entity['feature']
         self.problog = get_problog_layout(entity)
+
+class QNode(object):
+    def __init__(self,q_type, q_atom):
+        self.q_type = q_type # [and, or, not q_atom]
+        self.q_atom = q_atom
+        self.children = []
+
+    def add_child(self, obj):
+        self.children.append(obj)
+
+    def __str__(self):
+        return 'TYPE:{}, CH:{}'.format(self.q_type, self.children)
+
+def in_order(root):
+    print("root:",root)
+    if(root.q_type == "q_atom"):
+        print("ATOM:",root.q_atom)
+        return
+    print("\n\n\n")
+    for each in root.children:
+        in_order(each)
 
 
 def get_entity_layout(entity):
@@ -93,6 +114,46 @@ def get_action_terms_and_list(aliases):
     return q_actions + ', L = [{}]'.format(q_list)
 
 
+def q_tree_inorder(q_tree,q_list,q_alias):
+    if(q_tree.q_type == "q_atom"):
+        # do_stuff
+        return
+    for child in q_tree.children:
+        q_tree_inorder(child, q_list,q_alias)
+
+def q_add_atom(q_atom,q_list,q_alias):
+    q_type = q_atom['type']
+    body = q_atom['body']
+
+    if q_type == 'ml':
+        q_list.append(body)
+        return
+    elif q_type = 'nl':
+        construct = body['construct']
+        params_count = body['params_count']
+
+        num = body['number']
+        equal = body['equal']
+
+        alias_list = query['alias_list']
+        for a in alias_list:
+            q_alias.append(a)
+
+        iden = str(randint(1000,9999))
+        query = '( count({},{}, C{})'.format(a_list,equal,iden)
+        query = query + ' , C{} = {}'.format(iden, equal)
+        if construct == 'equalAtmost':
+            query = query + ' , C{} =< {} )'.format(iden, num)
+        if construct == 'equalAtleast':
+            query = query + ' , C{} >= {} )'.format(iden,num)
+        if construct == 'equalFew':
+            query = query + ' , C{} = {} )'.format(iden,num)
+        if construct == 'equalAll':
+            query = query + ' , C{} = {} )'.format(iden,6)
+        if construct == 'equalAny':
+            query = query + ' , C{} >= 1 )'.format(iden)
+
+
 
 class blackbox:
     def __init__(self):
@@ -116,40 +177,12 @@ class blackbox:
         self.action[action['alias']] = action_layout[1]
         return action_layout[0]
 
-    def add_query(self, query):
-        construct = query['construct']
-        params_count = query['params_count']
-        q_num = query['number']
-        q_equal = query['equal']
-        q_alias_list = query['alias_list']
-        print(q_alias_list)
-        q_list_iden = ''
-        l = 0
-        for al in q_alias_list:
-            q_list_iden = q_list_iden + al['name'] + '_'
-            l += al['length']
-        query = ''
-        query_name = ''
-        if params_count == 3:
-            query_name = 'q({}_{}_{}_{}) :- '.format(construct,q_num,q_list_iden, q_equal)
-            query = 'q({}_{}_{}_{}) :- '.format(construct,q_num,q_list_iden, q_equal)
-            query = query + ' {} , countall(L, E, C)'.format(get_action_terms_and_list(q_alias_list))
-            query = query + ' , E = {}'.format(q_equal)
-            if construct == 'equalAtmost':
-                query = query + ' , C =< {} .'.format(q_num)
-            if construct == 'equalAtleast':
-                query = query + ' , C >= {} .'.format(q_num)
-            if construct == 'equalFew':
-                query = query + ' , C = {} .'.format(q_num)
-        if params_count == 2:
-            query_name = 'q({}_{}_{}_{}) :- '.format(construct,q_num,q_list_iden, q_equal)
-            query = 'q({}_{}_{}_{}) :- '.format(construct,q_num,q_list_iden, q_equal)
-            query = query + ' {} , countall(L, E, C)'.format(get_action_terms_and_list(q_alias_list))
-            query = query + ' , E = {}'.format(q_equal)
-            if construct == 'equalAll':
-                query = query + ' , C = {} .'.format(l)
-            if construct == 'equalAny':
-                query = query + ' , C >= 1 .'
+    def add_query(self, query_tree):
+        required_alias = []
+        query = [] # list of strings, will be stiched later
+
+
+
 
         self.query[query_name] = query
 

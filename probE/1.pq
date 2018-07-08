@@ -11,9 +11,8 @@
 
 
 probability(
-            ( equalAtleast( 2, [ X | Y | Z ] , success) and equalAtmost( 2, X , fail) or equalAll( X , fail) )
-            or ( equalAtmost( 2, X , fail) or equalAll( X , fail) )
-            or ( equalAtmost( 2, X , fail) or equalAll( X , fail) )
+            ( equalAtleast( 2, [ X | Y | Z ] , success) or equalAtmost( 2, X , fail) and equalAll( X , fail) )
+            and (( X + Y + Z ) / 2) - 3 == 5
 
             )
 #  entity student[S](S :: success; 1-S::fail)
