@@ -31,8 +31,10 @@ dice_entity = { 'entity': 'dice',
                 }
 
 
-_entities = {'coin' : coin_entity , 'dice' : dice_entity }
-_alias_list = {}
+_entity = {}
+_alias = {}
+
+_entity_def_list = []
 
 def p_program(p):
     '''program : program statement '''
@@ -50,6 +52,10 @@ def p_statement_entity_def(p):
     '''statement : entity_def '''
     p[0] = p[1]
 
+def p_statement_entity_initialize(p):
+    ''' statement : entity_initialize_wrap '''
+    p[0] = p[1]
+
 def p_statement_entity_assignment(p):
     ''' statement : entity_action '''
     p[0] = p[1]
@@ -58,46 +64,69 @@ def p_statement_query(p):
     ''' statement : query_wrap '''
     p[0] = p[1]
 
+
+################################################################################
+############################     HELPERS   #####################################
+################################################################################
+
+def p_empty(p):
+    'empty :'
+    pass
+
+
 ################################################################################
 ############################  ENTITY DEF   #####################################
 ################################################################################
+#  entity coin[H,T](H::head;T::tail)
+#  entity coin[H=0.5,T=0.5](H::head;T::tail)
+#
 def p_entity_def(p):
-    ''' entity_def : ENTITY IDEN ed_params ed_feature '''
-    p[0] = {'entity': p[2], 'feature' : p[4] }
-    solver.add_enitity(p[0])
-    global _entities
-    _entities = { **_entities, **{ str(p[2]) : p[0]} }
+    ''' entity_def : ENTITY IDEN ed_feature '''
+    feature = p[3]['feature']
+    default = []
+    for key, value in feature.items():
+        default.append(value)
+
+    p[0] = {'entity': p[2], 'feature' : p[3]['feature'],'p_default': default }
+    if float(p[3]['sum']) > 1:
+        print("WARNING: Sum of probability greater than one! ", p.lineno(3))
+    if p[2] in _entity:
+        print("This entity is already defined, this will be rejected")
+    else:
+        solver.add_enitity(p[0])
+        global _entity
+        _entity[p[2]] =  p[0]
 
 
-     ############ --------------------------------------------------------------
-
-def p_ed_params(p):
-    ''' ed_params :  LEFTSQRBRACKET alias_list RIGHTSQRBRACKET '''
-    p[0] = p[2]
-
-def p_alias_list(p):
-    ''' alias_list : alias_list COMMA ALIAS ASSIGNMENT FLOAT
-                   | alias_list COMMA ALIAS
-    '''
-    size = len(p)
-    if size == 6:
-        ne = { p[3]:p[5] }
-        p[0] = { **p[1], **ne }
-    elif size == 4:
-        ne = { p[3]: 0.0 }
-        p[0] = { **p[1], **ne }
-
-
-def p_alias_list_single(p):
-    ''' alias_list : ALIAS ASSIGNMENT FLOAT
-                   | ALIAS
-    '''
-    if len(p) == 4:
-        p[0] = { p[1] : p[3]}
-    elif len(p) == 2:
-        p[0] = { p[1] : 0.0 }
-
-    ############ ---------------------------------------------------------------
+#      ############ --------------------------------------------------------------
+#
+# def p_ed_params(p):
+#     ''' ed_params :  LEFTSQRBRACKET alias_list RIGHTSQRBRACKET '''
+#     p[0] = p[2]
+#
+# def p_alias_list(p):
+#     ''' alias_list : alias_list COMMA ALIAS ASSIGNMENT FLOAT
+#                    | alias_list COMMA ALIAS
+#     '''
+#     size = len(p)
+#     if size == 6:
+#         ne = { p[3]:p[5] }
+#         p[0] = { **p[1], **ne }
+#     elif size == 4:
+#         ne = { p[3]: 0.0 }
+#         p[0] = { **p[1], **ne }
+#
+#
+# def p_alias_list_single(p):
+#     ''' alias_list : ALIAS ASSIGNMENT FLOAT
+#                    | ALIAS
+#     '''
+#     if len(p) == 4:
+#         p[0] = { p[1] : p[3]}
+#     elif len(p) == 2:
+#         p[0] = { p[1] : 0.0 }
+#
+#     ############ ---------------------------------------------------------------
 
 def p_ed_feature(p):
     ''' ed_feature : LEFTSMALLBRACKET ed_feature_inner RIGHTSMALLBRACKET'''
@@ -109,7 +138,8 @@ def p_ed_feature_inner(p):
 
 def p_entity_prop_prob(p):
     ''' entity_prop_prob : entity_prop_prob SEMICOLON entity_prop_prob_atom '''
-    p[1].update(p[3])
+    p[1]['feature'].update(p[3]['feature'])
+    p[1]['sum'] = float(p[1]['sum']) + float(p[3]['sum'])
     p[0] = p[1]
 
 def p_entity_prop_prob_single(p):
@@ -117,26 +147,53 @@ def p_entity_prop_prob_single(p):
     p[0] = p[1]
 
 def p_entity_prop_prob_atom(p):
-    ''' entity_prop_prob_atom : ALIAS DOUBLECOLON IDEN
-                             | ALIAS DOUBLECOLON NUMBER
+    ''' entity_prop_prob_atom : IDEN
+                             | NUMBER
     '''
-    p[0] = odict([(p[3],p[1])])
+    p[0] = { 'feature' : odict([(p[1],0)]) , 'sum' : 0 }
 
+def p_entity_prop_prob_atom_n(p):
+    ''' entity_prop_prob_atom : NUMBER DOUBLECOLON IDEN
+                             | NUMBER DOUBLECOLON NUMBER
+    '''
+    p[0] = { 'feature' : odict([(p[3],p[1])]), 'sum' : p[1] }
 
-    # to do add simple expr for prob.
-    ############ ---------------------------------------------------------------
+def p_entity_prop_prob_atom_f(p):
+    ''' entity_prop_prob_atom : FLOAT DOUBLECOLON IDEN
+                             | FLOAT DOUBLECOLON NUMBER
+    '''
+    p[0] = { 'feature' : odict([(p[3],p[1])]), 'sum' : p[1] }
+
 
 ################################################################################
 ############################  ENTITY Initialize   ##############################
 ################################################################################
+def p_entity_initialize_wrap(p):
+    ''' entity_initialize_wrap : ALIAS ASSIGNMENT entity_initialize '''
+    alias = {'id': p[1], 'type' : 'entity_instance', 'instance': p[3]}
+    global _alias
+    if p[1] in _alias:
+        print("Alias already exist", p.lineno(1))
+    else:
+        solver.add_entity_instance(p[3])
+        _alias[p[1]] = alias
+
 def p_entity_initialize(p):
     ''' entity_initialize : IDEN ei_params ei_number '''
-    p[0]  = {'entity': p[1], 'label': p[2]['flag'], 'params': p[2]['params'] , 'number' : p[3] }
+    if p[1] in _entity:
+        entity = _entity[p[1]]
+        e_p_length = len(entity['p_default'])
+        if p[2]['flag'] == 'empty':
+            e_param = entity['p_default']
+        elif len(p[2]['params'])== e_p_length:
+            e_param = p[2]['params']
+        else:
+            print("Pass all the required parameters")
 
-def p_empty(p):
-    'empty :'
-    pass
+        p[0]  = {'entity': p[1], 'label': p[2]['flag'], 'params': e_param , 'count' : p[3] }
 
+    else:
+        print("entity not defined")
 
 def p_ei_params(p):
     ''' ei_params : LEFTSMALLBRACKET  float_list ei_flag_option  RIGHTSMALLBRACKET '''
@@ -144,7 +201,7 @@ def p_ei_params(p):
 
 def p_ei_params_empty(p):
     ''' ei_params : empty '''
-    p[0] = 'empty'
+    p[0] = {'flag':'empty', 'params' : [] }
 
 def p_float_list(p):
     ''' float_list :  float_list COMMA FLOAT
@@ -175,22 +232,37 @@ def p_ei_number(p):
 ################################################################################
 ############################     ENTITY Action    ##############################
 ################################################################################
-# def p_entity_action(p):
-#     ''' entity_action : ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
-#     '''
-#     p[0] = {'entity' : p[1], 'action' : p[3], 'num' : p[5]}
+def p_entity_action(p):
+    ''' entity_action : ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+    '''
+    if p[1] in _alias:
+        print("Alias already exist", p.lineno(1))
+    else:
+        if p[3] in _alias and _alias[p[3]]['type'] == 'entity_instance':
+            entity_instance = _alias[p[3]]['instance']
+
+            entity_action = {'action_alias' : p[1], 'entity_instance': entity_instance }
+            action_return = solver.add_entity_action(entity_action)
+
+            _alias[p[1]] = { 'id':p[1],'type':'entity_action','return' : action_return,
+                            'length' : entity_instance['count'],'instance': entity_instance}
+        else:
+            print("wrong alias",p.lineno(3))
+
 
 def p_entity_action_e(p):
     ''' entity_action : ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET '''
-    entity_instance = p[3]
-    solver.add_entity_instance(p[3])
+    if p[1] in _alias:
+        print("Alias already exist", p.lineno(1))
+    else:
+        entity_instance = p[3]
+        solver.add_entity_instance(p[3])
 
-    entity_action = {'alias' : p[1], 'instance': entity_instance }
-    action_return = solver.add_entity_action(entity_action)
+        entity_action = {'action_alias' : p[1], 'entity_instance': entity_instance }
+        action_return = solver.add_entity_action(entity_action)
 
-    _alias_list[p[1]] = { 'return' : action_return, 'length' : entity_instance['number'] , 'name' : p[1]}
-
-    p[0] = {'entity' : p[1], 'action' : p[3], 'number' : p[5]}
+        _alias[p[1]] = { 'id':p[1],'type':'entity_action','return' : action_return,
+                        'length' : entity_instance['count'],'instance': entity_instance}
 
 def p_option_number(p):
     ''' option_number : NUMBER '''
@@ -347,7 +419,7 @@ def p_q_alias_concat(p):
 def p_alias_slice(p):
     ''' alias_slice : ALIAS
                     | ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET'''
-    alias = _alias_list[p[1]]
+    alias = _alias[p[1]]
     a_name = str(p[1])
     if len(p) == 2:
         res = ''

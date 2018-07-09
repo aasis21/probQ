@@ -1,5 +1,5 @@
 
-entity student[S,F](S :: 1; F :: 2)
+entity student(1/2 :: 1; 1/2 :: 2)
 
 X = student(1/5,4/5){3}.roll()
 Y = student(1/4,3/4){2}.roll()

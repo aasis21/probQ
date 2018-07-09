@@ -2,6 +2,17 @@ import sys
 import os
 from random import randint
 
+class DataCentre:
+    ''' Stores all relevent things of program'''
+    def __init__(self):
+        self.enitity_defs = {} # name : entity
+        self.enitity_instances = {}
+        self.enitity_actions = {}
+        self.buckets = {}
+        self.bucket_actions = {}
+        self.queries = {}
+        self.alias = {}
+
 class entity:
 
     def __init__(self,entity):
@@ -61,16 +72,16 @@ def get_entity_instance(instance):
     for p in instance['params']:
         e_instance_layout = e_instance_layout + p + ', '
 
-    e_instance_layout = e_instance_layout + 'D ) :- between(1, ' +  str(instance['number']) + ', D).'
+    e_instance_layout = e_instance_layout + 'D ) :- between(1, ' +  str(instance['count']) + ', D).'
 
     # print(e_instance_layout)
     return e_instance_layout
 
 def get_entity_action(action):
-    alias = action['alias']
-    ei = action['instance']
+    alias = action['action_alias']
+    ei = action['entity_instance']
     action_name  = 'alias_' + alias.strip()
-    count = int(ei['number'])
+    count = int(ei['count'])
 
     action_layout = action_name + '('
     for i in range(count):
@@ -195,8 +206,8 @@ class blackbox:
 
     def add_entity_action(self,action):
         action_layout = get_entity_action(action)
-        self.action[action['alias']] = action_layout[1]
-        self.action_def[action['alias']] = action_layout[0]
+        self.action[action['action_alias']] = action_layout[1]
+        self.action_def[action['action_alias']] = action_layout[0]
         return action_layout[0]
 
     def add_query(self, query_tree):
