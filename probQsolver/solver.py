@@ -36,7 +36,6 @@ def get_entity_layout(entity):
 
     entity_layout = entity_layout.strip('; ') + ' :- ' + e_iden_layout + '.'
 
-    print(entity_layout)
     return entity_layout
 
 def get_entity_instance(instance):
@@ -46,7 +45,6 @@ def get_entity_instance(instance):
 
     e_instance_layout = e_instance_layout + 'D ) :- between(1, ' +  str(instance['count']) + ', D).'
 
-    # print(e_instance_layout)
     return e_instance_layout
 
 def get_entity_action(action):

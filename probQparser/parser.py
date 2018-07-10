@@ -1,12 +1,12 @@
 from ply import yacc
-import probQlexer.lexer as lexer
-from collections import OrderedDict as odict
-from probQsolver.solver import blackbox , QNode
-import os
-import sys
-import time
+import os,sys,time
 
-tokens = lexer.tokens
+from collections import OrderedDict as odict
+from probQlexer.lexer import lexer
+from probQlexer.lexer import tokens as lexTokens
+from probQsolver.solver import blackbox , QNode
+
+tokens = lexTokens
 
 solver = blackbox()
 
@@ -27,10 +27,6 @@ _entity = {
 }
 _alias = {}
 
-_entity_def_list = []
-
-for key,value in _entity.items():
-    solver.add_enitity(value)
 
 def p_program(p):
     '''program : program statement '''
@@ -90,7 +86,6 @@ def p_entity_def(p):
         print("This entity is already defined, this will be rejected")
     else:
         solver.add_enitity(p[0])
-        global _entity
         _entity[p[2]] =  p[0]
 
 
@@ -167,7 +162,6 @@ def p_entity_prop_prob_atom_f(p):
 def p_entity_initialize_wrap(p):
     ''' entity_initialize_wrap : ALIAS ASSIGNMENT entity_initialize '''
     alias = {'id': p[1], 'type' : 'entity_instance', 'instance': p[3]}
-    global _alias
     if p[1] in _alias:
         print("Alias already exist", p.lineno(1))
     else:
@@ -507,15 +501,14 @@ def p_error(p):
    print("Syntax error in input!", p)
 
 
-
-# Catastrophic error handler
-
-probQparser = yacc.yacc()
-
-
-def parse(data, debug=0):
+def getSolver(data, debug=0):
+    probQparser = yacc.yacc()
     probQparser.error = 0
-    p = probQparser.parse(data, debug=debug)
-    if probQparser.error:
-        return None
-    return p
+    # declare pre-existing stuffs
+    for key,value in _entity.items():
+        solver.add_enitity(value)
+
+    # start parsing with lexer from probQlexer
+    p = probQparser.parse(data,lexer = lexer,debug=debug )
+
+    return solver

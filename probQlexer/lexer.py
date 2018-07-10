@@ -5,8 +5,6 @@ import ply.lex as lex
 tokens = [
     'IDEN',
     'ALIAS',
-    'E_ACTION',
-    'B_ACTION',
     'COMMENT',
     'ASSIGNMENT',
     'COMMA',
@@ -44,11 +42,9 @@ reserved = {
     'entity' : 'ENTITY',
     'roll' : 'ROLL',
     'flag': 'FLAG',
-    'action' : 'ACTION',
     'pick' : 'PICK',
     'probability' : 'QUERY',
     'evidence' : 'EVIDENCE',
-    'equal' : 'EQUAL',
     'equalAtmost' : 'EQUALATMOST',
     'equalAtleast' : 'EQUALATLEAST',
     'equalFew' : 'EQUALFEW',
@@ -151,18 +147,4 @@ def test(data):
 
 
 # Build the lexer
-lex.lex(debug = 0)
-
-source = '''
-bucket pocket( coin{2},coin(0.6){1} )
-
-X = pocket.pick(1)
-
-Y = X.flip()
-
-evidence( Y.equal(head) )
-
-Probability ( equal(X, coin(0.6) )
-'''
-
-#test(source)
+lexer = lex.lex(debug = 0)
