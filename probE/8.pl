@@ -4,11 +4,11 @@ P_Coin_head :: coin_roll(L, P_Coin_head, P_Coin_tail, D, head); P_Coin_tail :: c
 dice(empty, 0.16666666666, 0.16666666666, 0.16666666666, 0.16666666666, 0.16666666666, 0.16666666666, D ) :- between(1, 2, D).
 coin(empty, 0.5, 0.5, D ) :- between(1, 2, D).
 
-alias_Y(Y1, Y2) :- coin_roll(empty, 0.5, 0.5, 1, Y1 ), coin_roll(empty, 0.5, 0.5, 2, Y2 ) .
 alias_X(X1, X2) :- dice_roll(empty, 0.16666666666, 0.16666666666, 0.16666666666, 0.16666666666, 0.16666666666, 0.16666666666, 1, X1 ), dice_roll(empty, 0.16666666666, 0.16666666666, 0.16666666666, 0.16666666666, 0.16666666666, 0.16666666666, 2, X2 ) .
+alias_Y(Y1, Y2) :- coin_roll(empty, 0.5, 0.5, 1, Y1 ), coin_roll(empty, 0.5, 0.5, 2, Y2 ) .
 
-q(6830) :- alias_X(X1, X2),  ( ( X1 + X2 > 7 ) ; ( count([X1, X2],6, C6488) , C6488 = 2 ) ) . 
-q(4044) :- alias_Y(Y1, Y2),  ( count([Y1, Y2],head, C4230) , C4230 = 2 ) . 
+q(8530) :- alias_X(X1, X2),  ( ( X1 + X2 > 7 ) ; ( count([X1, X2],6, C4731) , C4731 = 2 ) ) . 
+q(2709) :- alias_Y(Y1, Y2),  ( count([Y1, Y2],head, C2237) , C2237 = 2 ) . 
 
 
 

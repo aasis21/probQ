@@ -1,6 +1,7 @@
 import sys
 import os
 from random import randint
+import re
 
 class QNode(object):
     def __init__(self,q_type, q_atom):
@@ -126,8 +127,14 @@ def q_add_atom(q_atom,q_alias):
 
     if q_type == 'me':
         query = '( ' + body + ' )'
-        # to do parse body to get alias list
+        regex = r'[\s+\-*\/%()][A-Z][a-zA-Z_0-9áéíóúñÁÉÍÓÚÑ]*[0-9]?'
+        matches = re.findall(regex,body)
+        alias_list = []
+        for each in matches:
+            alias_list.append(each.strip(' +-*/%()')[:-1])
+        q_alias += alias_list
         return query
+
     elif q_type == 'nl':
         construct = body['construct']
         params_count = body['params_count']

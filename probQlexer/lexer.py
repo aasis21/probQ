@@ -38,13 +38,13 @@ tokens = [
 
 # reserved words.
 reserved = {
-    'bucket':'BUCKET',
+    #'bucket':'BUCKET',
     'entity' : 'ENTITY',
     'roll' : 'ROLL',
-    'flag': 'FLAG',
-    'pick' : 'PICK',
+    #'flag': 'FLAG',
+    #'pick' : 'PICK',
     'probability' : 'QUERY',
-    'evidence' : 'EVIDENCE',
+    #'evidence' : 'EVIDENCE',
     'equalAtmost' : 'EQUALATMOST',
     'equalAtleast' : 'EQUALATLEAST',
     'equalFew' : 'EQUALFEW',
@@ -108,12 +108,12 @@ def t_NUMBER(t):
     return t
 
 def t_IDEN(t):
-    r'[a-z]([a-zA-Z_0-9áéíóúñÁÉÍÓÚÑ]*[áéíóúñÁÉÍÓÚÑa-zA-Z])?'
+    r'[a-z]([a-zA-Z_0-9áéíóúñÁÉÍÓÚÑ]*[áéíóúñÁÉÍÓÚÑa-zA-Z0-9])?'
     t.type = reserved.get(t.value,'IDEN')
     return t
 
 def t_ALIAS(t):
-    r'[A-Z]([a-zA-Z_0-9áéíóúñÁÉÍÓÚÑ]*[áéíóúñÁÉÍÓÚÑa-zA-Z])?'
+    r'[A-Z]([a-zA-Z_0-9áéíóúñÁÉÍÓÚÑ]*[áéíóúñÁÉÍÓÚÑa-zA-Z0-9])?'
     t.type = reserved.get(t.value,'ALIAS')
     return t
 

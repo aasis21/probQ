@@ -24,7 +24,7 @@ if source == '':
 print(">>>>>>>>>> compiling the source ",'\n')
 solver  = getSolver(source,0)
 code = solver.get_code()
-# print('\n',code,'\n')
+print('\n',code,'\n')
 
 output_file = input_file.split('.')[0] + '.pl'
 print('\n>>>>>>>>>> writing output file ' , output_file, '\n')

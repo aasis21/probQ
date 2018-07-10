@@ -1,3 +1,2 @@
-entity dice(1;2;3;4;5;6)
-X = dice(1/6,1/6,1/6,1/6,1/6,1/6){2}.roll()
-probability((X[1]+ X[2] / 4 == 1 ) or (X[1]+ X[2] / 4 == 2 ) or (X[1]+ X[2] / 4 == 3 ) or (X[1]+ X[2] / 6 == 2 ) or (X[1]+ X[2] / 6 == 1 ) )
+Xsdgg1ggdg1 = dice(1/6,1/6,1/6,1/6,1/6,1/6){2}.roll()
+probability(((Xsdgg1ggdg1[1]+ Xsdgg1ggdg1[2]) / 4 == 1 ) or ((Xsdgg1ggdg1[1]+ Xsdgg1ggdg1[2]) / 4 == 2 ) )
