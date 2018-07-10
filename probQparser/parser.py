@@ -1,7 +1,7 @@
 from ply import yacc
 import probQlexer.lexer as lexer
 from collections import OrderedDict as odict
-from probQsolver.solver import blackbox , QNode, in_order
+from probQsolver.solver import blackbox , QNode
 import os
 import sys
 import time
@@ -19,26 +19,22 @@ precedence = (
 # A BASIC program is a series of statements.  We represent the program as a
 # dictionary of tuples indexed by line number.
 
-coin_entity = { 'entity': 'coin',
-                'flags': {'flag': 'fair', 'action': 'flip'},
-                'params': {'H': 0.5},
-                'props': [{'head': {'prob': 0.5}, 'tail': {'prob': 13}}]
-                }
-dice_entity = { 'entity': 'dice',
-                'flags': {'flag': 'fair', 'action': 'roll'},
-                'params': {'O' : 1/6,'T': 1/6,'Th' : 1/6 , 'F': 1/6, 'Fv' : 1/6, 'S': 1/6},
-                'props': [{'1': {'prob': 1/6 }, '2': {'prob': 1/6},'3': {'prob': 1/6 }, '4': {'prob': 1/6},'5': {'prob': 1/6 }, '6': {'prob': 1/6}}]
-                }
-
-
-_entity = {}
+_entity = {
+    'dice' : {'entity': 'dice' , 'feature' : odict([(1,0.16666666666),(2,0.16666666666),(3,0.16666666666),(4,0.16666666666),(5,0.16666666666),(6,0.16666666666)]),
+              'p_default': [0.16666666666,0.16666666666,0.16666666666,0.16666666666,0.16666666666,0.16666666666] },
+    'coin' : {'entity': 'coin' , 'feature' : odict([('head',0.5),('tail',0.5)]),
+              'p_default': [0.5,0.5] }
+}
 _alias = {}
 
 _entity_def_list = []
 
+for key,value in _entity.items():
+    solver.add_enitity(value)
+
 def p_program(p):
     '''program : program statement '''
-    p[1] += [p[2]] + ["@@@@@@@@@@@@@@@@@@@@@2"]
+    p[1] += [p[2]]
     p[0] = p[1]
 
 def p_program_single(p):
@@ -193,6 +189,7 @@ def p_entity_initialize(p):
         p[0]  = {'entity': p[1], 'label': p[2]['flag'], 'params': e_param , 'count' : p[3] }
 
     else:
+        print(_entity)
         print("entity not defined")
 
 def p_ei_params(p):
@@ -505,9 +502,9 @@ def p_factor_expr(p):
 
 ############################### ME END  ########################################
 
-# Error rule for syntax errors
-#def p_error(p):
-#    print("Syntax error in input!")
+
+def p_error(p):
+   print("Syntax error in input!", p)
 
 
 

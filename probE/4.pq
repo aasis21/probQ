@@ -1,0 +1,5 @@
+entity student(solve;fail)
+A = student(1/2,1/2){1}.roll()
+B = student(1/3,2/3){1}.roll()
+C = student(1/4,3/4){1}.roll()
+probability( equalAtleast(1,[A|B|C], solve) )

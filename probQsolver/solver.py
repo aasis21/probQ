@@ -2,25 +2,6 @@ import sys
 import os
 from random import randint
 
-class DataCentre:
-    ''' Stores all relevent things of program'''
-    def __init__(self):
-        self.enitity_defs = {} # name : entity
-        self.enitity_instances = {}
-        self.enitity_actions = {}
-        self.buckets = {}
-        self.bucket_actions = {}
-        self.queries = {}
-        self.alias = {}
-
-class entity:
-
-    def __init__(self,entity):
-        self.entity = entity['entity']
-        self.params = entity['params']
-        self.feature = entity['feature']
-        self.problog = get_problog_layout(entity)
-
 class QNode(object):
     def __init__(self,q_type, q_atom):
         self.q_type = q_type # [and, or, not q_atom]
@@ -32,15 +13,6 @@ class QNode(object):
 
     def __str__(self):
         return 'TYPE:{}, CH:{}'.format(self.q_type, self.children)
-
-def in_order(root):
-    print("root:",root)
-    if(root.q_type == "q_atom"):
-        print("ATOM:",root.q_atom)
-        return
-    print("\n\n\n")
-    for each in root.children:
-        in_order(each)
 
 
 def get_entity_layout(entity):
@@ -70,7 +42,7 @@ def get_entity_layout(entity):
 def get_entity_instance(instance):
     e_instance_layout = instance['entity'] + '(' + instance['label'] + ', '
     for p in instance['params']:
-        e_instance_layout = e_instance_layout + p + ', '
+        e_instance_layout = e_instance_layout + str(p) + ', '
 
     e_instance_layout = e_instance_layout + 'D ) :- between(1, ' +  str(instance['count']) + ', D).'
 
@@ -244,11 +216,6 @@ class blackbox:
 count([],X,0).
 count([X|T],X,Y):- count(T,X,Z), Y is 1+Z.
 count([X1|T],X,Z):- X1\=X,count(T,X,Z).
-
-countall(List,X,C) :-
-    sort(List,List1),
-    member(X,List1),
-    count(List,X,C).
 
 '''
 
