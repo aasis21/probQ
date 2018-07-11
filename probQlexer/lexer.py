@@ -5,6 +5,8 @@ import ply.lex as lex
 tokens = [
     'IDEN',
     'ALIAS',
+    'E_ACTION',
+    'B_ACTION',
     'COMMENT',
     'ASSIGNMENT',
     'COMMA',
@@ -42,9 +44,11 @@ reserved = {
     'entity' : 'ENTITY',
     'roll' : 'ROLL',
     'flag': 'FLAG',
+    'action' : 'ACTION',
     'pick' : 'PICK',
     'probability' : 'QUERY',
     'evidence' : 'EVIDENCE',
+    'equal' : 'EQUAL',
     'equalAtmost' : 'EQUALATMOST',
     'equalAtleast' : 'EQUALATLEAST',
     'equalFew' : 'EQUALFEW',
@@ -52,7 +56,11 @@ reserved = {
     'equalAny' : 'EQUALANY',
     'and' : 'AND',
     'or' : 'OR',
-    'not' : 'NOT'
+    'not' : 'NOT',
+    'equal' : 'EQUAL',
+    'sumAtmost' : 'SUMATMOST',
+    'sumAtleast' : 'SUMATLEAST',
+    'SumEqual' : 'SUM',
 }
 
 tokens = tokens + list(reserved.values())
@@ -148,3 +156,4 @@ def test(data):
 
 # Build the lexer
 lexer = lex.lex(debug = 0)
+#for testing purpose

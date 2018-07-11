@@ -85,7 +85,7 @@ def p_entity_def(p):
     if p[2] in _entity:
         print("This entity is already defined, this will be rejected")
     else:
-        solver.add_enitity(p[0])
+        solver.add_entity(p[0])
         _entity[p[2]] =  p[0]
 
 
@@ -223,7 +223,7 @@ def p_ei_number(p):
 ################################################################################
 ############################     ENTITY Action    ##############################
 ################################################################################
-def p_entity_action(p):
+def p_entity_action(p):                                                         
     ''' entity_action : ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
     '''
     if p[1] in _alias:
@@ -338,16 +338,27 @@ def p_q_factor_list_s(p):
 def p_q_atom(p):
     ''' q_atom : q_equal_atom_3
                | q_equal_atom_2
+               | q_sum_atom
                | me_atom
     '''
     p[0] = QNode("q_atom", p[1])
 
 ################################ Keep  adding new atom here ####################
 
-
-def p_q_equal_atom3(p):
+def p_q_equal_atom4(p):                                                                             #equal(number,X|Y,iden)
     ''' q_equal_atom_3 : q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
                         | q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    '''
+
+    query_atom = {'construct' : p[1],'params_count' : 3 ,'number':p[3] , 'equal' : p[7],
+                  'alias_list' : p[5]['alias_list'],
+                  'list' : p[5]['list'] ,
+                  'list_len' : p[5]['list_len']
+                  }
+    p[0] = {'type': 'nl', 'body' :query_atom}
+
+def p_q_sum_atom(p):                                                                                #sum(X|Y|Z,3)
+    ''' q_sum_atom : q_sum LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
     '''
 
     query_atom = {'construct' : p[1],'params_count' : 3 ,'number':p[3] , 'equal' : p[7],
@@ -368,6 +379,11 @@ def p_q_equal_atom2(p):
                   }
     p[0] = {'type': 'nl', 'body' :query_atom}
 
+def p_query_sum(p):
+    ''' q_sum : SUMATMOST
+                | SUMATLEAST
+                | SUM '''
+    p[0] = p[1]
 
 def p_query_iden_3(p):
     ''' q_iden_3 : EQUALATMOST
@@ -506,7 +522,7 @@ def getSolver(data, debug=0):
     probQparser.error = 0
     # declare pre-existing stuffs
     for key,value in _entity.items():
-        solver.add_enitity(value)
+        solver.add_entity(value)
 
     # start parsing with lexer from probQlexer
     p = probQparser.parse(data,lexer = lexer,debug=debug )

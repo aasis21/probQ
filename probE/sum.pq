@@ -1,0 +1,5 @@
+entity coin(1;0)
+X = coin(0.6,0.4){1}.roll()
+Y = coin(0.6,0.4){1}.roll()
+Z = coin(0.6,0.4){1}.roll()
+probability(sum(X|Y|Z,0))

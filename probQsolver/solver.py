@@ -14,10 +14,11 @@ class QNode(object):
     def __str__(self):
         return 'TYPE:{}, CH:{}'.format(self.q_type, self.children)
 
+###################define entities#######################
 
-def get_entity_layout(entity):
-    problog_string = ''
-    e_action_layout_atom = entity['entity'] + '_roll(L'
+def get_entity_layout(entity):                                                                                                                          
+    problog_string = ''                                                                    #initialising problog code
+    e_action_layout_atom = entity['entity'] + '_roll(L'                                                 
     e_iden_layout = entity['entity'] + '(L'
     name = entity['entity']
     for key, value in entity['feature'].items():
@@ -38,6 +39,9 @@ def get_entity_layout(entity):
 
     return entity_layout
 
+
+###################define instance#######################
+
 def get_entity_instance(instance):
     e_instance_layout = instance['entity'] + '(' + instance['label'] + ', '
     for p in instance['params']:
@@ -46,7 +50,7 @@ def get_entity_instance(instance):
     e_instance_layout = e_instance_layout + 'D ) :- between(1, ' +  str(instance['count']) + ', D).'
 
     return e_instance_layout
-
+###################define alias#######################
 def get_entity_action(action):
     alias = action['action_alias']
     ei = action['entity_instance']
@@ -94,7 +98,7 @@ def get_action_terms_and_list(aliases):
     q_actions = q_actions.strip(', ')
     return q_actions + ', L = [{}]'.format(q_list)
 
-
+#####################query#########################
 def q_tree_inorder(q_tree,q_alias):
     '''
     returns a core query string to be added in query
@@ -102,7 +106,7 @@ def q_tree_inorder(q_tree,q_alias):
     if(q_tree.q_type == "q_atom"):
         q_atom_str = q_add_atom(q_tree.q_atom,q_alias)
         return q_atom_str
-
+#####################formin query string#####################
     query_str = ''
     for child in q_tree.children:
         q_atom_str = q_tree_inorder(child, q_alias)
@@ -155,7 +159,7 @@ def q_add_atom(q_atom,q_alias):
 
 
 
-
+#############################CODE GENERATOR#################################
 class blackbox:
     def __init__(self):
         self.entities = {}
@@ -165,8 +169,8 @@ class blackbox:
         self.action ={}
         self.query = {}
         self.action_def = {}
-
-    def add_enitity(self,entity):
+#####################adding entity layout###############################
+    def add_entity(self,entity):
         entity_layout = get_entity_layout(entity)
         self.entities[entity['entity']] = entity_layout
 
@@ -192,7 +196,7 @@ class blackbox:
         query_str = 'q({}) :- {} {} . '.format(query_name,query_alias_def,query_core)
         self.query[query_name] = query_str
         return
-
+####################PRINT CODE##########################
     def get_code(self):
         code = ''
         for key, value in self.entities.items():

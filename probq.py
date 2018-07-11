@@ -22,9 +22,9 @@ if source == '':
 
 # get the solver from probQparser
 print(">>>>>>>>>> compiling the source ",'\n')
-solver  = getSolver(source,0)
+solver  = getSolver(source,0)   
 code = solver.get_code()
-# print('\n',code,'\n')
+#print('\n',code,'\n')
 
 output_file = input_file.split('.')[0] + '.pl'
 print('\n>>>>>>>>>> writing output file ' , output_file, '\n')
@@ -37,7 +37,9 @@ print(">>>>>>>>>> Time taken to compile: ", str(elapsed_time), '\n')
 print(">>>>>>>>>> Running generated problog code ",'\n')
 
 start_time = time.time()
+print("-----------Answer-----------")
 os.system("problog " + str(output_file))
+print("-----------Answer-----------")
 elapsed_time = time.time() - start_time
 
 print("\n>>>>>>>>>> Total time taken : ", str(elapsed_time), '\n')
