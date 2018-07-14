@@ -16,7 +16,7 @@ class QNode(object):
         return 'TYPE:{}, CH:{}'.format(self.q_type, self.children)
 
 
-def get_entity_layout(entity):
+def get_entity(entity):
     problog_string = ''
     e_action_layout_atom = entity['entity'] + '_roll(L'
     e_iden_layout = entity['entity'] + '(L'
@@ -76,6 +76,90 @@ def get_entity_action(action):
     action_layout = action_layout.strip(', ') + ' .'
 
     return [action_term , action_layout]
+
+
+def get_bucket_action(action):
+    alias = action['action_alias']
+    pick_type = action['pick_type']
+    pick_count = int(action['pick_count'])
+
+    bucket = action['bucket']
+    bucket_state = int(bucket['state'])
+    bucket_items = []
+    for item in bucket['instances']:
+        item_layout = ''
+        if item['type'] == 'entity':
+            item_layout = item['entity'] + '(' + item['label'] + ', '
+            for p in item['params']:
+                item_layout += str(p) + ', '
+            item_layout += '1 )'
+        elif item['type'] == 'atom':
+            item_layout = item['name']
+        bucket_items.append(item_layout)
+
+    action_layout = ''
+    action_alias_layout = action_alias_layout = 'alias_{}('.format(alias)
+    for i in range(pick_count):
+        action_alias_layout += '{}{},'.format(alias,i+1)
+    action_alias_layout = action_alias_layout.strip(' ,') + ') :- '
+
+
+    bucket_new_state = bucket_state + pick_count
+    for i in range(bucket_state, bucket_new_state):
+        action_layout += h_bucket_action_template(bucket['bucket'],bucket_items,i,pick_type)
+        action_layout += '\n'
+        action_alias_layout += '{}_pick({}, {}, {}{},'.format(bucket['bucket'],pick_type, i+1,alias,i + 1 - bucket_state)
+        action_alias_layout += '_ ,'*len(bucket_items) + '_ ), '
+
+    action_alias_layout = action_alias_layout.strip(' ,') + '.'
+    action_layout += action_alias_layout
+
+    return action_layout
+
+
+def h_bucket_action_template(b_name,item_list, b_state,pick_type):
+    '''
+     Returns something like this for no replacement:
+     EC1/T ::  bag_pick(nr, 2 ,coin(0.5,0.5,1),EF1, EC2 , TF ); EC2/T :: bag_pick(nr, 2 ,
+     coin(0.6,0.4,1), EC1 ,EF2, TF) :- bag_pick(nr, 1, X , EC1, EC2, T), EF1 is EC1-1,
+     EF2 is EC2-1, TF is T-1.
+
+
+      Returns something like this for replacement:
+      EC1/T ::  bag_pick(r, 2 ,coin(0.5,0.5,1),EF1, EC2 , TF ); EC2/T :: bag_pick(r, 2 ,
+      coin(0.6,0.4,1), EC1 ,EF2, TF) :- bag_pick(nr, 1, X , EC1, EC2, T), EF1 is EC1,
+      EF2 is EC2, TF is T.
+    '''
+    template = ''
+    length = len(item_list)
+    for idx, item in enumerate(item_list):
+        layout = 'EC{}/T :: {}_pick({}, {},{},'.format(idx+1,b_name,pick_type,b_state +1,item)
+        for i in range(length):
+            if i==idx:
+                layout = layout + 'EF{},'.format(i+1)
+            else:
+                 layout = layout + 'EC{},'.format(i+1)
+
+        layout = layout + 'TF); '
+        template += layout
+
+    template = template.strip(' ;')
+    template += ':- {}_pick({}, {},DONT_CARE,'.format(b_name,pick_type,b_state)
+    for i in range(length):
+        template += 'EC{},'.format(i+1)
+    template += ' T), '
+    if pick_type=='nr':
+        for i in range(length):
+                template += 'EF{} is EC{} - 1,'.format(i+1,i+1)
+        template += 'TF is T - 1.'
+    elif pick_type == 'r':
+        for i in range(length):
+                template += 'EF{} is EC{},'.format(i+1,i+1)
+        template += 'TF is T .'
+
+    return template
+
+
 
 
 def get_alias_term_list(alias,start,end):
@@ -172,9 +256,10 @@ class blackbox:
         self.action ={}
         self.query = {}
         self.action_def = {}
+        self.bucket_action = {}
 
     def add_enitity(self,entity):
-        entity_layout = get_entity_layout(entity)
+        entity_layout = get_entity(entity)
         self.entities[entity['entity']] = entity_layout
 
     def add_entity_instance(self,instance):
@@ -186,6 +271,11 @@ class blackbox:
         self.action[action['action_alias']] = action_layout[1]
         self.action_def[action['action_alias']] = action_layout[0]
         return action_layout[0]
+
+    def add_bucket_action(self, action):
+        action_layout = get_bucket_action(action)
+        print(action_layout)
+        self.bucket_action[action['action_alias']] = action_layout
 
     def add_query(self, query_tree):
         q_alias = []

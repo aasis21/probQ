@@ -38,11 +38,11 @@ tokens = [
 
 # reserved words.
 reserved = {
-    #'bucket':'BUCKET',
+    'bucket':'BUCKET',
     'entity' : 'ENTITY',
     'roll' : 'ROLL',
     #'flag': 'FLAG',
-    #'pick' : 'PICK',
+    'pick' : 'PICK',
     'probability' : 'QUERY',
     #'evidence' : 'EVIDENCE',
     'equalAtmost' : 'EQUALATMOST',

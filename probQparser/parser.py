@@ -27,6 +27,8 @@ _entity = {
 }
 _alias = {}
 
+_bucket = {}
+
 
 def p_program(p):
     '''program : program statement '''
@@ -44,8 +46,8 @@ def p_statement_entity_def(p):
     '''statement : entity_def '''
     p[0] = p[1]
 
-def p_statement_entity_initialize(p):
-    ''' statement : entity_initialize_wrap '''
+def p_statement_entity_instance(p):
+    ''' statement : entity_instance_wrap '''
     p[0] = p[1]
 
 def p_statement_entity_assignment(p):
@@ -56,7 +58,13 @@ def p_statement_query(p):
     ''' statement : query_wrap '''
     p[0] = p[1]
 
+def p_statement_b(p):
+    ''' statement : bucket_def '''
+    p[0] = p[1]
 
+def p_statement_b_action(p):
+    ''' statement : bucket_action '''
+    p[0] = p[1]
 ################################################################################
 ############################     HELPERS   #####################################
 ################################################################################
@@ -157,10 +165,10 @@ def p_entity_prop_prob_atom_f(p):
 
 
 ################################################################################
-############################  ENTITY Initialize   ##############################
+############################  ENTITY instance   ##############################
 ################################################################################
-def p_entity_initialize_wrap(p):
-    ''' entity_initialize_wrap : ALIAS ASSIGNMENT entity_initialize '''
+def p_entity_instance_wrap(p):
+    ''' entity_instance_wrap : ALIAS ASSIGNMENT entity_instance '''
     alias = {'id': p[1], 'type' : 'entity_instance', 'instance': p[3]}
     if p[1] in _alias:
         print("Alias already exist", p.lineno(1))
@@ -168,8 +176,8 @@ def p_entity_initialize_wrap(p):
         solver.add_entity_instance(p[3])
         _alias[p[1]] = alias
 
-def p_entity_initialize(p):
-    ''' entity_initialize : IDEN ei_params ei_number '''
+def p_entity_instance(p):
+    ''' entity_instance : IDEN ei_params ei_number '''
     if p[1] in _entity:
         entity = _entity[p[1]]
         e_p_length = len(entity['p_default'])
@@ -180,11 +188,12 @@ def p_entity_initialize(p):
         else:
             print("Pass all the required parameters")
 
-        p[0]  = {'entity': p[1], 'label': p[2]['flag'], 'params': e_param , 'count' : p[3] }
+        p[0]  = {'type':'entity', 'entity': p[1], 'label': p[2]['flag'], 'params': e_param , 'count' : p[3] }
 
     else:
         print(_entity)
         print("entity not defined")
+
 
 def p_ei_params(p):
     ''' ei_params : LEFTSMALLBRACKET  float_list ei_flag_option  RIGHTSMALLBRACKET '''
@@ -235,14 +244,14 @@ def p_entity_action(p):
             entity_action = {'action_alias' : p[1], 'entity_instance': entity_instance }
             action_return = solver.add_entity_action(entity_action)
 
-            _alias[p[1]] = { 'id':p[1],'type':'entity_action','return' : action_return,
+            _alias[p[1]] = { 'id':p[1],'type' : 'entity_action','return' : action_return,
                             'length' : entity_instance['count'],'instance': entity_instance}
         else:
             print("wrong alias",p.lineno(3))
 
 
 def p_entity_action_e(p):
-    ''' entity_action : ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET '''
+    ''' entity_action : ALIAS ASSIGNMENT entity_instance DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET '''
     if p[1] in _alias:
         print("Alias already exist", p.lineno(1))
     else:
@@ -477,7 +486,7 @@ def p_term_div(p):
     p[0] = str(p[1]) + ' / ' +  str(p[3])
 
 def p_term_factor(p):
-    'a_term : a_factor'
+    ''' a_term : a_factor '''
     p[0] = p[1]
 
 def p_factor_num(p):
@@ -495,6 +504,60 @@ def p_factor_expr(p):
 
 
 ############################### ME END  ########################################
+
+################################################################################
+############################        BUCKET DEF       ###########################
+################################################################################
+
+def p_bucket_def(p):
+    ''' bucket_def : BUCKET IDEN LEFTSMALLBRACKET bucket_item_list RIGHTSMALLBRACKET'''
+    p[0] = {'bucket' : p[2], 'instances': p[4]['instances'], 'size': p[4]['size'], 'state': 0}
+    _bucket[p[2]] = p[0]
+
+def p_bucket_item_list_entity(p):
+    ''' bucket_item_list : bucket_item_list COMMA entity_instance
+                             | entity_instance
+    '''
+    if len(p)==4:
+        p[1]['instances'] += [p[3]]
+        p[0] = {'instances' : p[1]['instances'], 'size' : p[1]['size'] + p[3]['count'] }
+
+    if len(p)==2:
+        p[0] = {'instances': [p[1]], 'size' : p[1]['count'] }
+
+def p_bucket_item_list_atom(p):
+    ''' bucket_item_list : bucket_item_list COMMA atom
+                             | atom
+    '''
+    if len(p)==4:
+        p[1]['instances'] += [p[3]]
+        p[0] = {'instances' : p[1]['instances'], 'size' : p[1]['size'] + p[3]['count'] }
+
+    if len(p)==2:
+        p[0] = {'instances': [p[1]], 'size' : p[1]['count'] }
+
+def p_atom(p):
+    ''' atom : IDEN LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE '''
+    p[0] = {'count': p[3], 'type': 'atom' , 'name': p[1] }
+
+
+
+################################################################################
+############################        BUCKET ACTION      #########################
+################################################################################
+
+def p_bucket_action(p):
+    ''' bucket_action : ALIAS ASSIGNMENT IDEN DOT PICK LEFTSMALLBRACKET NUMBER COMMA IDEN RIGHTSMALLBRACKET '''
+    bucket = _bucket[p[3]]
+
+    bucket_action = {'action_alias' : p[1], 'bucket': bucket, 'pick_type' : p[9], 'pick_count': p[7] }
+    solver.add_bucket_action(bucket_action)
+    if str(p[9]) == 'nr':
+        bucket['state'] = int(bucket['state']) +  int(p[7])
+     #
+     #
+     # { 'id':p[1],'type':'bucket_action','return' : action_return,
+     #                        'length' : entity_instance['count'],'instance': entity_instance}
 
 
 def p_error(p):
