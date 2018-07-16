@@ -142,6 +142,7 @@ def p_entity_instance_wrap(p):
     if p[1] in _alias:
         print("Alias already exist", p.lineno(1))
     else:
+        p[3]['label'] = str(p[1]).lower()
         solver.add_entity_instance(p[3])
         _alias[p[1]] = alias
 
@@ -180,7 +181,7 @@ def p_ei_params_n(p):
 
 def p_ei_params_n_e(p):
     ''' ei_params_n : LEFTSMALLBRACKET   RIGHTSMALLBRACKET '''
-    p[0] = {'flag' : 'f', 'params': []}
+    p[0] = {'flag' : 'empty', 'params': []}
 
 def p_ei_params_empty(p):
     ''' ei_params : empty '''
@@ -247,6 +248,7 @@ def p_entity_action_e(p):
     if p[1] in _alias:
         print("Alias already exist", p.lineno(1))
     else:
+        p[3]['label'] = str(p[1]).lower()
         entity_instance = p[3]
         solver.add_entity_instance(p[3])
 

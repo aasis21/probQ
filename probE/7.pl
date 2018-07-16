@@ -1,13 +1,13 @@
 %---------------------------e_def----------------------------
-P_Coin_head :: coin_roll(L, P_Coin_head, P_Coin_tail, D, head); P_Coin_tail :: coin_roll(L, P_Coin_head, P_Coin_tail, D, tail) :- coin(L, P_Coin_head, P_Coin_tail, D).
 P_Dice_1 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 1); P_Dice_2 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 2); P_Dice_3 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 3); P_Dice_4 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 4); P_Dice_5 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 5); P_Dice_6 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 6) :- dice(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D).
+P_Coin_head :: coin_roll(L, P_Coin_head, P_Coin_tail, D, head); P_Coin_tail :: coin_roll(L, P_Coin_head, P_Coin_tail, D, tail) :- coin(L, P_Coin_head, P_Coin_tail, D).
 
 %-----------------------e_instance---------------------------
-coin(f, 0.2, 0.8, D ) :- between(1, 3, D).
+coin(x, 0.2, 0.8, D ) :- between(1, 3, D).
 
 
 %-----------------------e_action-----------------------------
-alias_X(X1, X2, X3) :- coin_roll(f, 0.2, 0.8, 1, X1 ), coin_roll(f, 0.2, 0.8, 2, X2 ), coin_roll(f, 0.2, 0.8, 3, X3 ) .
+alias_X(X1, X2, X3) :- coin_roll(x, 0.2, 0.8, 1, X1 ), coin_roll(x, 0.2, 0.8, 2, X2 ), coin_roll(x, 0.2, 0.8, 3, X3 ) .
 
 %--------------------------b_def-----------------------------
 bag_pick_with_state(r, 0, default,5,2,2,4,2,15).
@@ -27,8 +27,8 @@ alias_Y(Y1) :- bag_pick(nr, 1, Y1).
 
 
 %----------------------------query---------------------------
-q(8457) :- alias_X(X1, X2, X3),  ( ( count([X1, X2, X3],head, C4322) , C4322 =< 2 ) , ( X1 == head ) ) . 
-q(6456) :- alias_Y(Y1),  ( Y1 == ball(white) ) . 
+q(2002) :- alias_Y(Y1),  ( Y1 == ball(white) ) . 
+q(2406) :- alias_X(X1, X2, X3),  ( ( count([X1, X2, X3],head, C4420) , C4420 =< 2 ) , ( X1 == head ) ) . 
 
 
 
