@@ -92,10 +92,10 @@ def get_bucket_action(action):
     for item in bucket['instances']:
         item_layout = ''
         if item['type'] == 'entity_instance':
-            item_layout = item['entity'] + '(' + bucket['bucket'].strip(' ') +'_'+ pick_type + ', '
+            item_layout = item['entity'] + '('
             for p in item['params']:
                 item_layout += str(p) + ', '
-            item_layout += '1 )'
+            item_layout = item_layout.strip(' , ') + ')'
         elif item['type'] == 'atom':
             item_layout = item['name']
         bucket_items.append(item_layout)
@@ -123,8 +123,8 @@ def get_bucket_action(action):
 def h_bucket_action_template(b_name,item_list, b_state,pick_type):
     '''
      Returns something like this for no replacement:
-     EC1/T ::  bag_pick(nr, 2 ,coin(0.5,0.5,1),EF1, EC2 , TF ); EC2/T :: bag_pick(nr, 2 ,
-     coin(0.6,0.4,1), EC1 ,EF2, TF) :- bag_pick(nr, 1, X , EC1, EC2, T), EF1 is EC1-1,
+     EC1/T ::  bag_pick(nr, 2 ,coin(0.5,0.5),EF1, EC2 , TF ); EC2/T :: bag_pick(nr, 2 ,
+     coin(0.6,0.4), EC1 ,EF2, TF) :- bag_pick(nr, 1, X , EC1, EC2, T), EF1 is EC1-1,
      EF2 is EC2-1, TF is T-1.
 
 
@@ -176,10 +176,10 @@ def get_bucket_roll_action(action):
         for item in bucket['instances']:
             item_layout = ''
             if item['type'] == 'entity_instance':
-                item_l = item['entity'] + '( X1 , '
+                item_l = ''
                 for p in item['params']:
                     item_l += str(p) + ', '
-                item_layout += item_l + 'X2 ) :- {}_pick(_,X2,'.format(bucket['bucket']) + item_l + '_)).'
+                item_layout += item['entity'] + '( X1 , ' + item_l + 'X2 ) :- {}_pick( X1,X2,'.format(bucket['bucket']) + item['entity'] + '( ' + item_l  + ')).'
             elif item['type'] == 'atom':
                 item_l = item['name']
                 if '(' not in item_l:

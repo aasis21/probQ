@@ -74,6 +74,7 @@ def p_empty(p):
     pass
 
 
+
 ################################################################################
 ############################  ENTITY DEF   #####################################
 ################################################################################
@@ -162,10 +163,24 @@ def p_entity_instance(p):
         print(_entity)
         print("entity not defined")
 
+def p_entity_repr(p):
+    ''' entity_repr : IDEN ei_params_n '''
+    p[0] = '{}('.format(p[1])
+    for param in p[2]['params']:
+        p[0] += '{}, '.format(param)
+    p[0] = p[0].strip(', ') + ')'
 
 def p_ei_params(p):
     ''' ei_params : LEFTSMALLBRACKET  float_list ei_flag_option  RIGHTSMALLBRACKET '''
     p[0] = {'flag' : p[3], 'params': p[2]}
+
+def p_ei_params_n(p):
+    ''' ei_params_n : LEFTSMALLBRACKET  float_list ei_flag_option  RIGHTSMALLBRACKET '''
+    p[0] = {'flag' : p[3], 'params': p[2]}
+
+def p_ei_params_n_e(p):
+    ''' ei_params_n : LEFTSMALLBRACKET   RIGHTSMALLBRACKET '''
+    p[0] = {'flag' : 'f', 'params': []}
 
 def p_ei_params_empty(p):
     ''' ei_params : empty '''
@@ -331,9 +346,13 @@ def p_q_atom(p):
 ################################ Keep  adding new atom here ####################
 
 
+
 def p_q_equal_atom3(p):
     ''' q_equal_atom_3 : q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
                         | q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+                        | q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA entity_repr RIGHTSMALLBRACKET
+                        | q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA atom_repr RIGHTSMALLBRACKET
+
     '''
 
     query_atom = {'construct' : p[1],'params_count' : 3 ,'number':p[3] , 'equal' : p[7],
@@ -346,6 +365,8 @@ def p_q_equal_atom3(p):
 def p_q_equal_atom2(p):
     ''' q_equal_atom_2 : q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
                         | q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+                        | q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA entity_repr RIGHTSMALLBRACKET
+                        | q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA atom_repr RIGHTSMALLBRACKET
     '''
     query_atom = {'construct' : p[1],'params_count' : 2 ,'number': 0 , 'equal' : p[5],
                   'alias_list' : p[3]['alias_list'],
@@ -412,6 +433,8 @@ def p_alias_slice(p):
     res = res.strip(', ')
     p[0] = {'list' : res, 'name' : a_name, 'len' : a_len }
 
+
+
 ############################### ME :- constructer  :-  me_atom  ################
 def p_me_atom(p):
     ''' me_atom : a_expression_atom
@@ -435,7 +458,10 @@ def p_a_expr_atom_e(p):
 
 def p_a_expr_atom_ne(p):
     ''' a_expression_atom : a_expression NOTEQUAL a_expression '''
-    p[0] = p[1] + ' =\= ' + p[3]
+    if p[3].startswith('$$$$'):
+        p[0] = p[1] + ' \= ' + p[3][4:]
+    else:
+        p[0] = p[1] + ' =\= ' + p[3]
 
 def p_a_expr_atom_ge(p):
     ''' a_expression_atom : a_expression GREATEREQUAL a_expression '''
@@ -477,8 +503,12 @@ def p_term_factor(p):
     p[0] = p[1]
 
 def p_factor_iden(p):
-    ''' a_factor : IDEN '''
+    ''' a_factor : IDEN
+                | atom_repr
+                | entity_repr
+    '''
     p[0] = '$$$$' + str(p[1])
+    print(p[0])
 
 def p_factor_num(p):
     ''' a_factor : NUMBER
@@ -539,11 +569,14 @@ def p_atom(p):
         p[0] = {'count': p[3], 'type': 'atom' , 'name': p[1] }
 
 def p_atom_wf(p):
-    ''' atom : IDEN LEFTSMALLBRACKET IDEN RIGHTSMALLBRACKET LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE
-             | IDEN LEFTSMALLBRACKET NUMBER RIGHTSMALLBRACKET LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE
-    '''
-    p[0] = {'count': p[6], 'type': 'atom' , 'name': '{}({})'.format(p[1],p[3]) }
+    ''' atom : atom_repr LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE '''
+    p[0] = {'count': p[3], 'type': 'atom' , 'name': p[1] }
 
+def p_atom_repr(p):
+    ''' atom_repr : IDEN LEFTSMALLBRACKET IDEN RIGHTSMALLBRACKET
+                    | IDEN LEFTSMALLBRACKET NUMBER RIGHTSMALLBRACKET
+    '''
+    p[0] = '{}({})'.format(p[1],p[3])
 
 ################################################################################
 ############################        BUCKET ACTION      #########################
