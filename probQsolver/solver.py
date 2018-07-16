@@ -84,12 +84,15 @@ def get_bucket_action(action):
     pick_count = int(action['pick_count'])
 
     bucket = action['bucket']
-    bucket_state = int(bucket['state'])
+    if pick_type=='nr':
+        bucket_state = int(bucket['nr_state'])
+    else:
+        bucket_state = int(bucket['r_state'])
     bucket_items = []
     for item in bucket['instances']:
         item_layout = ''
-        if item['type'] == 'entity':
-            item_layout = item['entity'] + '(' + item['label'] + ', '
+        if item['type'] == 'entity_instance':
+            item_layout = item['entity'] + '(' + bucket['bucket'].strip(' ') +'_'+ pick_type + ', '
             for p in item['params']:
                 item_layout += str(p) + ', '
             item_layout += '1 )'
@@ -101,20 +104,20 @@ def get_bucket_action(action):
     action_alias_layout = action_alias_layout = 'alias_{}('.format(alias)
     for i in range(pick_count):
         action_alias_layout += '{}{},'.format(alias,i+1)
-    action_alias_layout = action_alias_layout.strip(' ,') + ') :- '
-
-
+    action_alias_layout = action_alias_layout.strip(' ,') + ')'
+    action_alias_def = action_alias_layout
+    action_alias_layout += ' :- '
     bucket_new_state = bucket_state + pick_count
     for i in range(bucket_state, bucket_new_state):
         action_layout += h_bucket_action_template(bucket['bucket'],bucket_items,i,pick_type)
-        action_layout += '\n'
-        action_alias_layout += '{}_pick({}, {}, {}{},'.format(bucket['bucket'],pick_type, i+1,alias,i + 1 - bucket_state)
-        action_alias_layout += '_ ,'*len(bucket_items) + '_ ), '
+        action_layout += '\n\n'
+        action_alias_layout += '{}_pick({}, {}, {}{}),'.format(bucket['bucket'],pick_type, i+1,alias,i + 1 - bucket_state)
 
     action_alias_layout = action_alias_layout.strip(' ,') + '.'
     action_layout += action_alias_layout
 
-    return action_layout
+
+    return [action_alias_def, action_layout]
 
 
 def h_bucket_action_template(b_name,item_list, b_state,pick_type):
@@ -133,7 +136,7 @@ def h_bucket_action_template(b_name,item_list, b_state,pick_type):
     template = ''
     length = len(item_list)
     for idx, item in enumerate(item_list):
-        layout = 'EC{}/T :: {}_pick({}, {},{},'.format(idx+1,b_name,pick_type,b_state +1,item)
+        layout = 'EC{}/T :: {}_pick_with_state({}, {},{},'.format(idx+1,b_name,pick_type,b_state +1,item)
         for i in range(length):
             if i==idx:
                 layout = layout + 'EF{},'.format(i+1)
@@ -144,7 +147,7 @@ def h_bucket_action_template(b_name,item_list, b_state,pick_type):
         template += layout
 
     template = template.strip(' ;')
-    template += ':- {}_pick({}, {},DONT_CARE,'.format(b_name,pick_type,b_state)
+    template += ':- {}_pick_with_state({}, {},DONT_CARE,'.format(b_name,pick_type,b_state)
     for i in range(length):
         template += 'EC{},'.format(i+1)
     template += ' T), '
@@ -159,6 +162,38 @@ def h_bucket_action_template(b_name,item_list, b_state,pick_type):
 
     return template
 
+
+def get_bucket_roll_action(action):
+    alias = action['action_alias']
+    bucket_pick = action['bucket_pick']
+    print(bucket_pick)
+    roll_overload = int(bucket_pick['roll_overload'])
+    pick_count = int(bucket_pick['length'])
+    bucket = bucket_pick['bucket']
+    overload = []
+
+    if roll_overload == 0:
+        for item in bucket['instances']:
+            item_layout = ''
+            if item['type'] == 'entity_instance':
+                item_l = item['entity'] + '( X1 , '
+                for p in item['params']:
+                    item_l += str(p) + ', '
+                item_layout += item_l + 'X2 ) :- {}_pick(_,X2,'.format(bucket['bucket']) + item_l + '_)).'
+            elif item['type'] == 'atom':
+                item_l = item['name']
+                if '(' not in item_l:
+                    item_layout += item_l + '( {}_r , X2 ) :- {}_pick(_,X2,'.format(bucket['bucket'],bucket['bucket']) + item_l + '). \n'
+                    item_layout += item_l + '( {}_nr , X2 ) :- {}_pick(_,X2,'.format(bucket['bucket'],bucket['bucket']) + item_l + '). \n'
+                else:
+                    param = item['name'].split('(')[1].split(')')[0]
+                    name = item['name'].split('(')[0]
+                    item_layout += param + '( {}_r , X2 ) :- {}_pick(_,X2,'.format(bucket['bucket'],bucket['bucket']) + item_l + '). \n'
+                    item_layout += param + '( {}_nr , X2 ) :- {}_pick(_,X2,'.format(bucket['bucket'],bucket['bucket']) + item_l + '). \n'
+
+            overload.append(item_layout)
+
+    return overload
 
 
 
@@ -211,7 +246,7 @@ def q_add_atom(q_atom,q_alias):
 
     if q_type == 'me':
         query = '( ' + body + ' )'
-        regex = r'[\s+\-*\/%()][A-Z][a-zA-Z_0-9áéíóúñÁÉÍÓÚÑ]*[0-9]?'
+        regex = r'[\s+\-*\/%()]?[A-Z][a-zA-Z_0-9áéíóúñÁÉÍÓÚÑ]*[0-9]?'
         matches = re.findall(regex,body)
         alias_list = []
         for each in matches:
@@ -256,7 +291,9 @@ class blackbox:
         self.action ={}
         self.query = {}
         self.action_def = {}
+        self.bucket_def = []
         self.bucket_action = {}
+        self.bucket_roll_action = {}
 
     def add_enitity(self,entity):
         entity_layout = get_entity(entity)
@@ -272,10 +309,35 @@ class blackbox:
         self.action_def[action['action_alias']] = action_layout[0]
         return action_layout[0]
 
+    def add_bucket_def(self,bucket):
+        b_name = bucket['bucket']
+        template_r = '{}_pick_with_state(r, 0, default,'.format(b_name)
+        template_nr = '{}_pick_with_state(nr, 0, default,'.format(b_name)
+
+        with_state_to_pick = '{}_pick(Type, State, Atom) :- {}_pick_with_state(Type, State, Atom,'.format(b_name,b_name)
+        for item in bucket['instances']:
+            template_r += str(item['count']) + ','
+            template_nr += str(item['count']) + ','
+            with_state_to_pick += '_ , '
+
+        template_r += str(bucket['size']) + ').'
+        template_nr += str(bucket['size']) + ').'
+        with_state_to_pick += '_ ). '
+        self.bucket_def.append(template_r)
+        self.bucket_def.append(template_nr)
+        self.bucket_def.append(with_state_to_pick)
+
+
     def add_bucket_action(self, action):
         action_layout = get_bucket_action(action)
-        print(action_layout)
-        self.bucket_action[action['action_alias']] = action_layout
+        self.bucket_action[action['action_alias']] = action_layout[1]
+        self.action_def[action['action_alias']] = action_layout[0]
+
+    def add_bucket_picked_roll(self,action):
+        action_layout = get_bucket_roll_action(action)
+        self.bucket_def += action_layout
+
+
 
     def add_query(self, query_tree):
         q_alias = []
@@ -292,15 +354,27 @@ class blackbox:
 
     def get_code(self):
         code = ''
+        code += '%---------------------------e_def----------------------------\n'
         for key, value in self.entities.items():
             code = code + str(value) + '\n'
         code = code + '\n'
+        code += '%-----------------------e_instance---------------------------\n'
         for value in self.entity_instances:
-            code = code + str(value) + '\n'
+            code = code + str(value) + '\n\n'
         code = code + '\n'
+        code += '%-----------------------e_action-----------------------------\n'
         for key, value in self.action.items():
             code = code + str(value) + '\n'
         code = code + '\n'
+        code += '%--------------------------b_def-----------------------------\n'
+        for value in self.bucket_def:
+            code = code + str(value) + '\n'
+        code = code + '\n'
+        code += '%--------------------------b_action--------------------------\n'
+        for key, value in self.bucket_action.items():
+            code = code + str(value) + '\n\n'
+        code = code + '\n'
+        code += '%----------------------------query---------------------------\n'
         for key, value in self.query.items():
             code = code + str(value) + '\n'
         code = code + '\n'
@@ -311,7 +385,6 @@ class blackbox:
 count([],X,0).
 count([X|T],X,Y):- count(T,X,Z), Y is 1+Z.
 count([X1|T],X,Z):- X1\=X,count(T,X,Z).
-
 '''
 
         code = code + count + 'query(q(_)).'

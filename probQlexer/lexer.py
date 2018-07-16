@@ -43,7 +43,7 @@ reserved = {
     'roll' : 'ROLL',
     #'flag': 'FLAG',
     'pick' : 'PICK',
-    'probability' : 'QUERY',
+    'probab' : 'QUERY',
     #'evidence' : 'EVIDENCE',
     'equalAtmost' : 'EQUALATMOST',
     'equalAtleast' : 'EQUALATLEAST',
