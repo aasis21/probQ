@@ -125,7 +125,7 @@ def h_bucket_action_template(b_name,item_list, b_state,pick_type):
      Returns something like this for no replacement:
      EC1/T ::  bag_pick(nr, 2 ,coin(0.5,0.5),EF1, EC2 , TF ); EC2/T :: bag_pick(nr, 2 ,
      coin(0.6,0.4), EC1 ,EF2, TF) :- bag_pick(nr, 1, X , EC1, EC2, T), EF1 is EC1-1,
-     EF2 is EC2-1, TF is T-1.
+     EF2 is EC2-1, TF is T-1, .
 
 
       Returns something like this for replacement:
@@ -153,12 +153,12 @@ def h_bucket_action_template(b_name,item_list, b_state,pick_type):
     template += ' T), '
     if pick_type=='nr':
         for i in range(length):
-                template += 'EF{} is EC{} - 1,'.format(i+1,i+1)
-        template += 'TF is T - 1.'
+                template += 'EF{} is EC{} - 1, EF{} >= 0,'.format(i+1,i+1,i + 1)
+        template += 'TF is T - 1, TF >= 0.'
     elif pick_type == 'r':
         for i in range(length):
                 template += 'EF{} is EC{},'.format(i+1,i+1)
-        template += 'TF is T .'
+        template += 'TF is T, TF >= 0 .'
 
     return template
 

@@ -1,3 +1,5 @@
+### Entity Based Questions
+
 Q) A problem is given to three students whose chances of solving it are 1/2, 1/3 and 1/4 respectively. What is the probability that the problem will be solved?
 ```
 entity student(do;n_do)
@@ -66,4 +68,52 @@ Q) A coin is tossed 5 times. What is the probability that head appears an odd nu
 ```
 X = coin{5}.roll()
 probability( ) // new construct.
+```
+
+### Bucket Based Questions
+Q) A bag contains 7 green and 5 black balls. Three balls are drawn one after the other. The probability of all three balls being green, if the balls drawn are not replaced will be.
+```
+bucket bag(green{7}, black{5})
+X = bag.pick(3,nr)
+probab(equalAll(X,green))
+```
+> Answer = 0.159(c)
+
+Q )   A bag contains 6 white and 4 black balls .2 balls are drawn at random. Find the probability that they are of same colour.
+```
+bucket bag(white{6}, black{4})
+X = bag.pick(2,nr)
+probab(equalAll(X,white) or equalAll(X, black))
+```
+> Answer = 0.466 (c)
+
+Q )   A bag contains 6 white and 4 black balls .2 balls are drawn at random with replacement . Find the probability that they are of same colour.
+```
+bucket bag(white{6}, black{4})
+X = bag.pick(2,r)
+probab(equalAll(X,white) or equalAll(X, black))
+```
+> Answer = 0.52 (c)
+
+Q) A box contains 10 bulbs,of which just three are defective. If a random sample of five bulbs is drawn, find the probability that the sample contains exactly one defective bulb.
+```
+bucket box( bulb(defective){3}, bulb(good){7} )
+X = box.pick(5,nr)
+probab(equalFew(1,X, bulb(defective) ))
+```
+Answer = 0.41 (c)
+Q)  Four persons are to be choosen from a group of 3 men, 2 women and 4 children. Find the probability of selecting 1 man,1 woman and 2 children.
+```
+bucket people(man{3}, woman{2}, child{4})
+X = people.pick(4,nr)
+probab(equalFew(1,X,man) and equalFew(1,X,woman) and equalFew(2,X,child) )
+```
+> Answer = 0.28 (c)
+
+Q ) A bag contains contain 4 normal coin and 2 baised coin towards head with 0.6.  What is the probability that both are unbiased when 2 coins are drawn.
+```
+bucket bag(coin{4}, coin(0.6,0.4){2})
+X = bag.pick(2,nr)
+probab(X[1] == coin(0.5,0.5) and X[2] == coin(0.5,0.5) )
+probab(equalAll(X, coin(1/2,1/2) ))
 ```
