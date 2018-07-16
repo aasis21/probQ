@@ -164,16 +164,15 @@ def p_entity_instance(p):
         print(_entity)
         print("entity not defined")
 
-def p_entity_repr(p):
-    ''' entity_repr : IDEN ei_params_n '''
-    p[0] = '{}('.format(p[1])
-    for param in p[2]['params']:
-        p[0] += '{}, '.format(param)
-    p[0] = p[0].strip(', ') + ')'
-
 def p_ei_params(p):
     ''' ei_params : LEFTSMALLBRACKET  float_list ei_flag_option  RIGHTSMALLBRACKET '''
     p[0] = {'flag' : p[3], 'params': p[2]}
+
+def p_ei_params_empty(p):
+    ''' ei_params : empty '''
+    p[0] = {'flag':'empty', 'params' : [] }
+
+
 
 def p_ei_params_n(p):
     ''' ei_params_n : LEFTSMALLBRACKET  float_list ei_flag_option  RIGHTSMALLBRACKET '''
@@ -183,9 +182,13 @@ def p_ei_params_n_e(p):
     ''' ei_params_n : LEFTSMALLBRACKET   RIGHTSMALLBRACKET '''
     p[0] = {'flag' : 'empty', 'params': []}
 
-def p_ei_params_empty(p):
-    ''' ei_params : empty '''
-    p[0] = {'flag':'empty', 'params' : [] }
+
+def p_entity_repr(p):
+    ''' entity_repr : IDEN ei_params_n '''
+    p[0] = '{}('.format(p[1])
+    for param in p[2]['params']:
+        p[0] += '{}, '.format(param)
+    p[0] = p[0].strip(', ') + ')'
 
 def p_float_list(p):
     ''' float_list :  float_list COMMA FLOAT
@@ -236,8 +239,6 @@ def p_entity_action(p):
             bucket_roll_action =  {'action_alias' : p[1], 'bucket_pick': bucket_pick }
             solver.add_bucket_picked_roll(bucket_roll_action)
             bucket_pick['roll_overload'] = 1
-
-
 
         else:
             print("wrong alias",p.lineno(3))
