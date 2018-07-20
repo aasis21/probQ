@@ -25,8 +25,8 @@ entity dice(1/3 :: 1; 1/3 :: 2; 1/3 :: 3)
 - ToDo :  add other feature explicitly with prob 0 when feature length is 1.
 
 ### Enitity Instance
->  entity_instance_wrap : ALIAS ASSIGNMENT entity_instance
->  entity_instance : IDEN ei_params ei_number
+>  entity_instance_wrap : ALIAS ASSIGNMENT entity_instance 
+>  entity_instance : IDEN ei_params ei_number 
 ```
 X = coin(1/4,3/4){3}
 Y = coin{2}
@@ -44,8 +44,8 @@ Y = coin{2}
 						 'params':[0.25, 0.75]  ,
 						 'count' : 3
 					}
-
-
+					
+		
 	}
 	```
 - This layout is added to parser alias dict as ID as key.
@@ -79,8 +79,8 @@ B = coin(1/5,4/5){2}.roll()
 						 'params':['0.2', '0.8']  ,
 						 'count' : 2
 					}
-
-
+					
+		
 	}
 	```
 - This layout is added to parser alias dict as ID as key.
@@ -101,10 +101,10 @@ bucket bag( coin{5}, coin(1/4,3/4){2},
 		-  coin{3}
 		-  Picking it gives coin with its params.
 		- Ones picked, rolling it gives either head or tail i.e same as entity_action
-	- Atom :
+	- Atom : 
 		- racket{2}, Picking it gives racket, Ones picked, rolling it gives racket.
 		- ball(white){2}, picking it gives ball(white),  Ones picked, rolling it gives white.
-- Layout :
+- Layout : 
 	```
 	{
 		'bucket': 'bag',
@@ -115,19 +115,19 @@ bucket bag( coin{5}, coin(1/4,3/4){2},
 			{
 				'type': 'entity_instance',
 				'entity': 'coin',
-				'label': 'default',
+				'label': 'default', 
 				'params': ['0.5', '0.5'],
 				'count': 5
-			},
+			}, 
 			{
 				'type': 'entity_instance',
 				'entity': 'coin',
-				'label': 'f',
+				'label': 'f', 
 				'params': ['0.25', '0.75'],
 				'count': 2
-			},
-			{'count': 2, 'type': 'atom', 'name': 'ball(red)'},
-			{'count': 4, 'type': 'atom', 'name': 'ball(white)'},
+			}, 
+			{'count': 2, 'type': 'atom', 'name': 'ball(red)'}, 
+			{'count': 4, 'type': 'atom', 'name': 'ball(white)'}, 
 			{'count': 2, 'type': 'atom', 'name': 'racket'}]
 	}
 	```
@@ -139,7 +139,7 @@ bucket bag( coin{5}, coin(1/4,3/4){2},
 - This layout is added to parser bucket dict with name as key.
 
 ### Bucket Action
->  bucket_action : ALIAS ASSIGNMENT IDEN DOT PICK LEFTSMALLBRACKET NUMBER COMMA IDEN RIGHTSMALLBRACKET
+>  bucket_action : ALIAS ASSIGNMENT IDEN DOT PICK LEFTSMALLBRACKET NUMBER COMMA IDEN RIGHTSMALLBRACKET 
 ```
 X = bag.pick(2,r)
 Y = bag.pick(3,nr)
@@ -161,10 +161,14 @@ Y = bag.pick(3,nr)
 	EC1/T  ::  bag_pick(r, 1,coin(bag_r, 0.5, 0.5, 1 ),EF1,EC2,EC3,EC4,EC5,TF); \
 	EC2/T :: bag_pick(r, 1,coin(bag_r, 0.25, 0.75, 1 ),EC1,EF2,EC3,EC4,EC5,TF); \
 	EC3/T :: bag_pick(r, 1,ball(red),EC1,EC2,EF3,EC4,EC5,TF); \
-	EC4/T :: bag_pick(r, 1,ball(white),EC1,EC2,EC3,EF4,EC5,TF); \
+	EC4/T :: bag_pick(r, 1,ball(white),EC1,EC2,EC3,EF4,EC5,TF); \ 
 	EC5/T :: bag_pick(r, 1,racket,EC1,EC2,EC3,EC4,EF5,TF) \
 	:- bag_pick(r, 0,DONT_CARE,EC1,EC2,EC3,EC4,EC5, T), \
 	  EF1 is EC1,EF2 is EC2,EF3 is EC3,EF4 is EC4,EF5 is EC5,TF is T .
 
 	alias_Y(Y1) :- bag_pick(r, 1, Y1,_ ,_ ,_ ,_ ,_ ,_ ).
 	```
+
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbMTgwNzU0MjMyMF19
+-->
