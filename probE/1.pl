@@ -1,4 +1,3 @@
-##equal atleast
 P_Student_success :: student_roll(L, P_Student_success, P_Student_fail, D, success); P_Student_fail :: student_roll(L, P_Student_success, P_Student_fail, D, fail) :- student(L, P_Student_success, P_Student_fail, D).
 
 student(f, 0.2, 0.8, D ) :- between(1, 1, D).

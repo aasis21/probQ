@@ -30,6 +30,14 @@ tokens = [
     'LESSEQUAL',
     'LESS',
 
+    'SUM',
+    'SUMATMOST',
+    'SUMATLEAST',
+
+    'MOD',
+    'MODATMOST',
+    'MODATLEAST',
+
     'FRACTION',
     'FLOAT',
     'PLUS',
@@ -54,13 +62,17 @@ reserved = {
     'equalFew' : 'EQUALFEW',
     'equalAll' : 'EQUALALL',
     'equalAny' : 'EQUALANY',
+    'sum' : 'SUM',
+    'sumAtMost' : 'SUMATMOST',
+    'sumAtLeast' : 'SUMATLEAST',
+    'mod' : 'MOD',
+    'modAtMost' : 'MODATMOST',
+    'modAtLeast' : 'MODATLEAST',
     'and' : 'AND',
     'or' : 'OR',
     'not' : 'NOT',
-    'equal' : 'EQUAL',
-    'sumAtmost' : 'SUMATMOST',
-    'sumAtleast' : 'SUMATLEAST',
-    'SumEqual' : 'SUM',
+    'odd' : 'ODD',
+    'even' : 'EVEN'
 }
 
 tokens = tokens + list(reserved.values())
@@ -155,5 +167,20 @@ def test(data):
 
 
 # Build the lexer
-lexer = lex.lex(debug = 0)
+lex.lex(debug = 0)
 #for testing purpose
+"""
+source = '''
+bucket pocket( coin{2},coin(0.6){1} )
+
+X = pocket.pick(1)
+
+Y = X.flip()
+
+evidence( Y.equal(head) )
+
+Probability ( equal(X, coin(0.6) )
+'''
+
+#test(source)
+"""

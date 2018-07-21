@@ -1,4 +1,3 @@
-
 P_Student_1 :: student_roll(L, P_Student_1, P_Student_2, D, 1); P_Student_2 :: student_roll(L, P_Student_1, P_Student_2, D, 2) :- student(L, P_Student_1, P_Student_2, D).
 
 student(f, 0.2, 0.8, D ) :- between(1, 3, D).

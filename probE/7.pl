@@ -1,11 +1,10 @@
-P_Dice_1 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 1); P_Dice_2 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 2); P_Dice_3 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 3); P_Dice_4 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 4); P_Dice_5 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 5); P_Dice_6 :: dice_roll(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D, 6) :- dice(L, P_Dice_1, P_Dice_2, P_Dice_3, P_Dice_4, P_Dice_5, P_Dice_6, D).
 P_Coin_head :: coin_roll(L, P_Coin_head, P_Coin_tail, D, head); P_Coin_tail :: coin_roll(L, P_Coin_head, P_Coin_tail, D, tail) :- coin(L, P_Coin_head, P_Coin_tail, D).
 
 coin(f, 0.5, 0.5, D ) :- between(1, 3, D).
 
 alias_X(X1, X2, X3) :- coin_roll(f, 0.5, 0.5, 1, X1 ), coin_roll(f, 0.5, 0.5, 2, X2 ), coin_roll(f, 0.5, 0.5, 3, X3 ) .
 
-q(9539) :- alias_X(X1, X2, X3),  ( count([X1, X2, X3],head, C4253) , C4253 =< 2 ) . 
+q(3882) :- alias_X(X1, X2, X3),  ( count([X1, X2, X3],head, C4910) , C4910 =< 2 ) . 
 
 
 

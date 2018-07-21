@@ -1,0 +1,2394 @@
+Created by PLY version 3.10 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    E_ACTION
+    B_ACTION
+    COMMENT
+    FRACTION
+    BUCKET
+    FLAG
+    ACTION
+    PICK
+    EVIDENCE
+    ODD
+    EVEN
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> program statement
+Rule 2     program -> statement
+Rule 3     statement -> entity_def
+Rule 4     statement -> entity_initialize_wrap
+Rule 5     statement -> entity_action
+Rule 6     statement -> query_wrap
+Rule 7     empty -> <empty>
+Rule 8     entity_def -> ENTITY IDEN ed_feature
+Rule 9     ed_feature -> LEFTSMALLBRACKET ed_feature_inner RIGHTSMALLBRACKET
+Rule 10    ed_feature_inner -> entity_prop_prob
+Rule 11    entity_prop_prob -> entity_prop_prob SEMICOLON entity_prop_prob_atom
+Rule 12    entity_prop_prob -> entity_prop_prob_atom
+Rule 13    entity_prop_prob_atom -> IDEN
+Rule 14    entity_prop_prob_atom -> NUMBER
+Rule 15    entity_prop_prob_atom -> NUMBER DOUBLECOLON IDEN
+Rule 16    entity_prop_prob_atom -> NUMBER DOUBLECOLON NUMBER
+Rule 17    entity_prop_prob_atom -> FLOAT DOUBLECOLON IDEN
+Rule 18    entity_prop_prob_atom -> FLOAT DOUBLECOLON NUMBER
+Rule 19    entity_initialize_wrap -> ALIAS ASSIGNMENT entity_initialize
+Rule 20    entity_initialize -> IDEN ei_params ei_number
+Rule 21    ei_params -> LEFTSMALLBRACKET float_list ei_flag_option RIGHTSMALLBRACKET
+Rule 22    ei_params -> empty
+Rule 23    float_list -> float_list COMMA FLOAT
+Rule 24    float_list -> float_list COMMA NUMBER
+Rule 25    float_list -> FLOAT
+Rule 26    float_list -> NUMBER
+Rule 27    ei_flag_option -> BAR IDEN
+Rule 28    ei_flag_option -> empty
+Rule 29    ei_number -> LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE
+Rule 30    entity_action -> ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+Rule 31    entity_action -> ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+Rule 32    option_number -> NUMBER
+Rule 33    option_number -> empty
+Rule 34    query_wrap -> QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET
+Rule 35    q_expr -> q_term_list OR q_term
+Rule 36    q_expr -> q_term
+Rule 37    q_term -> q_factor_list AND q_factor
+Rule 38    q_term -> q_factor
+Rule 39    q_term_list -> q_term_list OR q_term
+Rule 40    q_term_list -> q_term
+Rule 41    q_factor -> q_atom
+Rule 42    q_factor -> NOT q_factor
+Rule 43    q_factor -> LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET
+Rule 44    q_factor_list -> q_factor_list AND q_factor
+Rule 45    q_factor_list -> q_factor
+Rule 46    q_atom -> q_equal_atom_3
+Rule 47    q_atom -> q_equal_atom_2
+Rule 48    q_atom -> q_sum_atom
+Rule 49    q_atom -> me_atom
+Rule 50    q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+Rule 51    q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+Rule 52    q_sum_atom -> q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+Rule 53    q_alias_sum_concat_wrap -> LEFTSMALLBRACKET q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap RIGHTSMALLBRACKET
+Rule 54    q_alias_sum_concat_wrap -> q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap
+Rule 55    q_alias_sum_concat_wrap -> q_alias_sum_concat_wrap_atom
+Rule 56    q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+Rule 57    q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+Rule 58    q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+Rule 59    q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+Rule 60    q_sum -> SUM
+Rule 61    q_sum -> SUMATLEAST
+Rule 62    q_sum -> SUMATMOST
+Rule 63    q_iden_3 -> EQUALATMOST
+Rule 64    q_iden_3 -> EQUALATLEAST
+Rule 65    q_iden_3 -> EQUALFEW
+Rule 66    q_iden_2 -> EQUALALL
+Rule 67    q_iden_2 -> EQUALANY
+Rule 68    q_alias_concat_wrap -> alias_slice
+Rule 69    q_alias_concat_wrap -> LEFTSQRBRACKET q_alias_concat RIGHTSQRBRACKET
+Rule 70    q_alias_concat -> q_alias_concat BAR alias_slice
+Rule 71    q_alias_concat -> alias_slice
+Rule 72    alias_slice -> ALIAS
+Rule 73    alias_slice -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+Rule 74    me_atom -> a_expression_atom
+Rule 75    a_expression_atom -> a_expression EQUAL a_expression
+Rule 76    a_expression_atom -> a_expression NOTEQUAL a_expression
+Rule 77    a_expression_atom -> a_expression GREATEREQUAL a_expression
+Rule 78    a_expression_atom -> a_expression GREATER a_expression
+Rule 79    a_expression_atom -> a_expression LESSEQUAL a_expression
+Rule 80    a_expression_atom -> a_expression LESS a_expression
+Rule 81    a_expression -> a_expression PLUS a_term
+Rule 82    a_expression -> a_expression MINUS a_term
+Rule 83    a_expression -> a_term
+Rule 84    a_term -> a_term TIMES a_factor
+Rule 85    a_term -> a_term DIVIDE a_factor
+Rule 86    a_term -> a_factor
+Rule 87    a_factor -> NUMBER
+Rule 88    a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+Rule 89    a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+Terminals, with rules where they appear
+
+ACTION               : 
+ALIAS                : 19 30 30 31 56 57 72 73 88
+AND                  : 37 44
+ASSIGNMENT           : 19 30 31
+BAR                  : 27 53 54 70
+BUCKET               : 
+B_ACTION             : 
+COLON                : 57 73
+COMMA                : 23 24 50 50 51 51 52 58 59
+COMMENT              : 
+DIVIDE               : 85
+DOT                  : 30 31
+DOUBLECOLON          : 15 16 17 18
+ENTITY               : 8
+EQUAL                : 75
+EQUALALL             : 66
+EQUALANY             : 67
+EQUALATLEAST         : 64
+EQUALATMOST          : 63
+EQUALFEW             : 65
+EVEN                 : 
+EVIDENCE             : 
+E_ACTION             : 
+FLAG                 : 
+FLOAT                : 17 18 23 25
+FRACTION             : 
+GREATER              : 78
+GREATEREQUAL         : 77
+IDEN                 : 8 13 15 17 20 27 50 58
+LEFTCURLYBRACE       : 29
+LEFTSMALLBRACKET     : 9 21 30 31 34 43 50 51 52 53 58 59 89
+LEFTSQRBRACKET       : 56 57 69 73 88
+LESS                 : 80
+LESSEQUAL            : 79
+MINUS                : 82
+NOT                  : 42
+NOTEQUAL             : 76
+NUMBER               : 14 15 16 16 18 24 26 29 32 50 51 51 52 56 57 57 59 73 73 87 88
+ODD                  : 
+OR                   : 35 39
+PICK                 : 
+PLUS                 : 81
+QUERY                : 34
+RIGHTCURLYBRACE      : 29
+RIGHTSMALLBRACKET    : 9 21 30 31 34 43 50 51 52 53 58 59 89
+RIGHTSQRBRACKET      : 56 57 69 73 88
+ROLL                 : 30 31
+SEMICOLON            : 11
+SUM                  : 60
+SUMATLEAST           : 61
+SUMATMOST            : 62
+TIMES                : 84
+error                : 
+
+Nonterminals, with rules where they appear
+
+a_expression         : 75 75 76 76 77 77 78 78 79 79 80 80 81 82 89
+a_expression_atom    : 74
+a_factor             : 84 85 86
+a_term               : 81 82 83 84 85
+alias_slice          : 68 70 71
+ed_feature           : 8
+ed_feature_inner     : 9
+ei_flag_option       : 21
+ei_number            : 20
+ei_params            : 20
+empty                : 22 28 33
+entity_action        : 5
+entity_def           : 3
+entity_initialize    : 19 31
+entity_initialize_wrap : 4
+entity_prop_prob     : 10 11
+entity_prop_prob_atom : 11 12
+float_list           : 21 23 24
+me_atom              : 49
+option_number        : 30 31
+program              : 1 0
+q_alias_concat       : 69 70
+q_alias_concat_wrap  : 50 51 58 59
+q_alias_sum_concat_wrap : 52 53 54
+q_alias_sum_concat_wrap_atom : 53 54 55
+q_atom               : 41
+q_equal_atom_2       : 47
+q_equal_atom_3       : 46
+q_expr               : 34 43
+q_factor             : 37 38 42 44 45
+q_factor_list        : 37 44
+q_iden_2             : 58 59
+q_iden_3             : 50 51
+q_sum                : 52
+q_sum_atom           : 48
+q_term               : 35 36 39 40
+q_term_list          : 35 39
+query_wrap           : 6
+statement            : 1 2
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . program statement
+    (2) program -> . statement
+    (3) statement -> . entity_def
+    (4) statement -> . entity_initialize_wrap
+    (5) statement -> . entity_action
+    (6) statement -> . query_wrap
+    (8) entity_def -> . ENTITY IDEN ed_feature
+    (19) entity_initialize_wrap -> . ALIAS ASSIGNMENT entity_initialize
+    (30) entity_action -> . ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+    (31) entity_action -> . ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+    (34) query_wrap -> . QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET
+
+    ENTITY          shift and go to state 7
+    ALIAS           shift and go to state 8
+    QUERY           shift and go to state 9
+
+    program                        shift and go to state 1
+    statement                      shift and go to state 2
+    entity_def                     shift and go to state 3
+    entity_initialize_wrap         shift and go to state 4
+    entity_action                  shift and go to state 5
+    query_wrap                     shift and go to state 6
+
+state 1
+
+    (0) S' -> program .
+    (1) program -> program . statement
+    (3) statement -> . entity_def
+    (4) statement -> . entity_initialize_wrap
+    (5) statement -> . entity_action
+    (6) statement -> . query_wrap
+    (8) entity_def -> . ENTITY IDEN ed_feature
+    (19) entity_initialize_wrap -> . ALIAS ASSIGNMENT entity_initialize
+    (30) entity_action -> . ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+    (31) entity_action -> . ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+    (34) query_wrap -> . QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET
+
+    ENTITY          shift and go to state 7
+    ALIAS           shift and go to state 8
+    QUERY           shift and go to state 9
+
+    statement                      shift and go to state 10
+    entity_def                     shift and go to state 3
+    entity_initialize_wrap         shift and go to state 4
+    entity_action                  shift and go to state 5
+    query_wrap                     shift and go to state 6
+
+state 2
+
+    (2) program -> statement .
+
+    ENTITY          reduce using rule 2 (program -> statement .)
+    ALIAS           reduce using rule 2 (program -> statement .)
+    QUERY           reduce using rule 2 (program -> statement .)
+    $end            reduce using rule 2 (program -> statement .)
+
+
+state 3
+
+    (3) statement -> entity_def .
+
+    ENTITY          reduce using rule 3 (statement -> entity_def .)
+    ALIAS           reduce using rule 3 (statement -> entity_def .)
+    QUERY           reduce using rule 3 (statement -> entity_def .)
+    $end            reduce using rule 3 (statement -> entity_def .)
+
+
+state 4
+
+    (4) statement -> entity_initialize_wrap .
+
+    ENTITY          reduce using rule 4 (statement -> entity_initialize_wrap .)
+    ALIAS           reduce using rule 4 (statement -> entity_initialize_wrap .)
+    QUERY           reduce using rule 4 (statement -> entity_initialize_wrap .)
+    $end            reduce using rule 4 (statement -> entity_initialize_wrap .)
+
+
+state 5
+
+    (5) statement -> entity_action .
+
+    ENTITY          reduce using rule 5 (statement -> entity_action .)
+    ALIAS           reduce using rule 5 (statement -> entity_action .)
+    QUERY           reduce using rule 5 (statement -> entity_action .)
+    $end            reduce using rule 5 (statement -> entity_action .)
+
+
+state 6
+
+    (6) statement -> query_wrap .
+
+    ENTITY          reduce using rule 6 (statement -> query_wrap .)
+    ALIAS           reduce using rule 6 (statement -> query_wrap .)
+    QUERY           reduce using rule 6 (statement -> query_wrap .)
+    $end            reduce using rule 6 (statement -> query_wrap .)
+
+
+state 7
+
+    (8) entity_def -> ENTITY . IDEN ed_feature
+
+    IDEN            shift and go to state 11
+
+
+state 8
+
+    (19) entity_initialize_wrap -> ALIAS . ASSIGNMENT entity_initialize
+    (30) entity_action -> ALIAS . ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+    (31) entity_action -> ALIAS . ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+
+    ASSIGNMENT      shift and go to state 12
+
+
+state 9
+
+    (34) query_wrap -> QUERY . LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET
+
+    LEFTSMALLBRACKET shift and go to state 13
+
+
+state 10
+
+    (1) program -> program statement .
+
+    ENTITY          reduce using rule 1 (program -> program statement .)
+    ALIAS           reduce using rule 1 (program -> program statement .)
+    QUERY           reduce using rule 1 (program -> program statement .)
+    $end            reduce using rule 1 (program -> program statement .)
+
+
+state 11
+
+    (8) entity_def -> ENTITY IDEN . ed_feature
+    (9) ed_feature -> . LEFTSMALLBRACKET ed_feature_inner RIGHTSMALLBRACKET
+
+    LEFTSMALLBRACKET shift and go to state 15
+
+    ed_feature                     shift and go to state 14
+
+state 12
+
+    (19) entity_initialize_wrap -> ALIAS ASSIGNMENT . entity_initialize
+    (30) entity_action -> ALIAS ASSIGNMENT . ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+    (31) entity_action -> ALIAS ASSIGNMENT . entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+    (20) entity_initialize -> . IDEN ei_params ei_number
+
+    ALIAS           shift and go to state 16
+    IDEN            shift and go to state 18
+
+    entity_initialize              shift and go to state 17
+
+state 13
+
+    (34) query_wrap -> QUERY LEFTSMALLBRACKET . q_expr RIGHTSMALLBRACKET
+    (35) q_expr -> . q_term_list OR q_term
+    (36) q_expr -> . q_term
+    (39) q_term_list -> . q_term_list OR q_term
+    (40) q_term_list -> . q_term
+    (37) q_term -> . q_factor_list AND q_factor
+    (38) q_term -> . q_factor
+    (44) q_factor_list -> . q_factor_list AND q_factor
+    (45) q_factor_list -> . q_factor
+    (41) q_factor -> . q_atom
+    (42) q_factor -> . NOT q_factor
+    (43) q_factor -> . LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET
+    (46) q_atom -> . q_equal_atom_3
+    (47) q_atom -> . q_equal_atom_2
+    (48) q_atom -> . q_sum_atom
+    (49) q_atom -> . me_atom
+    (50) q_equal_atom_3 -> . q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (51) q_equal_atom_3 -> . q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (58) q_equal_atom_2 -> . q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (59) q_equal_atom_2 -> . q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (52) q_sum_atom -> . q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (74) me_atom -> . a_expression_atom
+    (63) q_iden_3 -> . EQUALATMOST
+    (64) q_iden_3 -> . EQUALATLEAST
+    (65) q_iden_3 -> . EQUALFEW
+    (66) q_iden_2 -> . EQUALALL
+    (67) q_iden_2 -> . EQUALANY
+    (60) q_sum -> . SUM
+    (61) q_sum -> . SUMATLEAST
+    (62) q_sum -> . SUMATMOST
+    (75) a_expression_atom -> . a_expression EQUAL a_expression
+    (76) a_expression_atom -> . a_expression NOTEQUAL a_expression
+    (77) a_expression_atom -> . a_expression GREATEREQUAL a_expression
+    (78) a_expression_atom -> . a_expression GREATER a_expression
+    (79) a_expression_atom -> . a_expression LESSEQUAL a_expression
+    (80) a_expression_atom -> . a_expression LESS a_expression
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NOT             shift and go to state 26
+    LEFTSMALLBRACKET shift and go to state 19
+    EQUALATMOST     shift and go to state 36
+    EQUALATLEAST    shift and go to state 37
+    EQUALFEW        shift and go to state 38
+    EQUALALL        shift and go to state 39
+    EQUALANY        shift and go to state 40
+    SUM             shift and go to state 41
+    SUMATLEAST      shift and go to state 42
+    SUMATMOST       shift and go to state 43
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+
+    q_expr                         shift and go to state 20
+    q_term_list                    shift and go to state 21
+    q_term                         shift and go to state 22
+    q_factor_list                  shift and go to state 23
+    q_factor                       shift and go to state 24
+    q_atom                         shift and go to state 25
+    q_equal_atom_3                 shift and go to state 27
+    q_equal_atom_2                 shift and go to state 28
+    q_sum_atom                     shift and go to state 29
+    me_atom                        shift and go to state 30
+    q_iden_3                       shift and go to state 31
+    q_iden_2                       shift and go to state 33
+    q_sum                          shift and go to state 34
+    a_expression_atom              shift and go to state 35
+    a_expression                   shift and go to state 44
+    a_term                         shift and go to state 45
+    a_factor                       shift and go to state 46
+
+state 14
+
+    (8) entity_def -> ENTITY IDEN ed_feature .
+
+    ENTITY          reduce using rule 8 (entity_def -> ENTITY IDEN ed_feature .)
+    ALIAS           reduce using rule 8 (entity_def -> ENTITY IDEN ed_feature .)
+    QUERY           reduce using rule 8 (entity_def -> ENTITY IDEN ed_feature .)
+    $end            reduce using rule 8 (entity_def -> ENTITY IDEN ed_feature .)
+
+
+state 15
+
+    (9) ed_feature -> LEFTSMALLBRACKET . ed_feature_inner RIGHTSMALLBRACKET
+    (10) ed_feature_inner -> . entity_prop_prob
+    (11) entity_prop_prob -> . entity_prop_prob SEMICOLON entity_prop_prob_atom
+    (12) entity_prop_prob -> . entity_prop_prob_atom
+    (13) entity_prop_prob_atom -> . IDEN
+    (14) entity_prop_prob_atom -> . NUMBER
+    (15) entity_prop_prob_atom -> . NUMBER DOUBLECOLON IDEN
+    (16) entity_prop_prob_atom -> . NUMBER DOUBLECOLON NUMBER
+    (17) entity_prop_prob_atom -> . FLOAT DOUBLECOLON IDEN
+    (18) entity_prop_prob_atom -> . FLOAT DOUBLECOLON NUMBER
+
+    IDEN            shift and go to state 51
+    NUMBER          shift and go to state 52
+    FLOAT           shift and go to state 53
+
+    ed_feature_inner               shift and go to state 48
+    entity_prop_prob               shift and go to state 49
+    entity_prop_prob_atom          shift and go to state 50
+
+state 16
+
+    (30) entity_action -> ALIAS ASSIGNMENT ALIAS . DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+
+    DOT             shift and go to state 54
+
+
+state 17
+
+    (19) entity_initialize_wrap -> ALIAS ASSIGNMENT entity_initialize .
+    (31) entity_action -> ALIAS ASSIGNMENT entity_initialize . DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+
+    ENTITY          reduce using rule 19 (entity_initialize_wrap -> ALIAS ASSIGNMENT entity_initialize .)
+    ALIAS           reduce using rule 19 (entity_initialize_wrap -> ALIAS ASSIGNMENT entity_initialize .)
+    QUERY           reduce using rule 19 (entity_initialize_wrap -> ALIAS ASSIGNMENT entity_initialize .)
+    $end            reduce using rule 19 (entity_initialize_wrap -> ALIAS ASSIGNMENT entity_initialize .)
+    DOT             shift and go to state 55
+
+
+state 18
+
+    (20) entity_initialize -> IDEN . ei_params ei_number
+    (21) ei_params -> . LEFTSMALLBRACKET float_list ei_flag_option RIGHTSMALLBRACKET
+    (22) ei_params -> . empty
+    (7) empty -> .
+
+    LEFTSMALLBRACKET shift and go to state 57
+    LEFTCURLYBRACE  reduce using rule 7 (empty -> .)
+
+    ei_params                      shift and go to state 56
+    empty                          shift and go to state 58
+
+state 19
+
+    (43) q_factor -> LEFTSMALLBRACKET . q_expr RIGHTSMALLBRACKET
+    (89) a_factor -> LEFTSMALLBRACKET . a_expression RIGHTSMALLBRACKET
+    (35) q_expr -> . q_term_list OR q_term
+    (36) q_expr -> . q_term
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (39) q_term_list -> . q_term_list OR q_term
+    (40) q_term_list -> . q_term
+    (37) q_term -> . q_factor_list AND q_factor
+    (38) q_term -> . q_factor
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (44) q_factor_list -> . q_factor_list AND q_factor
+    (45) q_factor_list -> . q_factor
+    (41) q_factor -> . q_atom
+    (42) q_factor -> . NOT q_factor
+    (43) q_factor -> . LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+    (46) q_atom -> . q_equal_atom_3
+    (47) q_atom -> . q_equal_atom_2
+    (48) q_atom -> . q_sum_atom
+    (49) q_atom -> . me_atom
+    (50) q_equal_atom_3 -> . q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (51) q_equal_atom_3 -> . q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (58) q_equal_atom_2 -> . q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (59) q_equal_atom_2 -> . q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (52) q_sum_atom -> . q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (74) me_atom -> . a_expression_atom
+    (63) q_iden_3 -> . EQUALATMOST
+    (64) q_iden_3 -> . EQUALATLEAST
+    (65) q_iden_3 -> . EQUALFEW
+    (66) q_iden_2 -> . EQUALALL
+    (67) q_iden_2 -> . EQUALANY
+    (60) q_sum -> . SUM
+    (61) q_sum -> . SUMATLEAST
+    (62) q_sum -> . SUMATMOST
+    (75) a_expression_atom -> . a_expression EQUAL a_expression
+    (76) a_expression_atom -> . a_expression NOTEQUAL a_expression
+    (77) a_expression_atom -> . a_expression GREATEREQUAL a_expression
+    (78) a_expression_atom -> . a_expression GREATER a_expression
+    (79) a_expression_atom -> . a_expression LESSEQUAL a_expression
+    (80) a_expression_atom -> . a_expression LESS a_expression
+
+    NOT             shift and go to state 26
+    LEFTSMALLBRACKET shift and go to state 19
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    EQUALATMOST     shift and go to state 36
+    EQUALATLEAST    shift and go to state 37
+    EQUALFEW        shift and go to state 38
+    EQUALALL        shift and go to state 39
+    EQUALANY        shift and go to state 40
+    SUM             shift and go to state 41
+    SUMATLEAST      shift and go to state 42
+    SUMATMOST       shift and go to state 43
+
+    q_expr                         shift and go to state 59
+    a_expression                   shift and go to state 60
+    q_term_list                    shift and go to state 21
+    q_term                         shift and go to state 22
+    a_term                         shift and go to state 45
+    q_factor_list                  shift and go to state 23
+    q_factor                       shift and go to state 24
+    a_factor                       shift and go to state 46
+    q_atom                         shift and go to state 25
+    q_equal_atom_3                 shift and go to state 27
+    q_equal_atom_2                 shift and go to state 28
+    q_sum_atom                     shift and go to state 29
+    me_atom                        shift and go to state 30
+    q_iden_3                       shift and go to state 31
+    q_iden_2                       shift and go to state 33
+    q_sum                          shift and go to state 34
+    a_expression_atom              shift and go to state 35
+
+state 20
+
+    (34) query_wrap -> QUERY LEFTSMALLBRACKET q_expr . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 61
+
+
+state 21
+
+    (35) q_expr -> q_term_list . OR q_term
+    (39) q_term_list -> q_term_list . OR q_term
+
+    OR              shift and go to state 62
+
+
+state 22
+
+    (36) q_expr -> q_term .
+    (40) q_term_list -> q_term .
+
+    RIGHTSMALLBRACKET reduce using rule 36 (q_expr -> q_term .)
+    OR              reduce using rule 40 (q_term_list -> q_term .)
+
+
+state 23
+
+    (37) q_term -> q_factor_list . AND q_factor
+    (44) q_factor_list -> q_factor_list . AND q_factor
+
+    AND             shift and go to state 63
+
+
+state 24
+
+    (38) q_term -> q_factor .
+    (45) q_factor_list -> q_factor .
+
+    RIGHTSMALLBRACKET reduce using rule 38 (q_term -> q_factor .)
+    OR              reduce using rule 38 (q_term -> q_factor .)
+    AND             reduce using rule 45 (q_factor_list -> q_factor .)
+
+
+state 25
+
+    (41) q_factor -> q_atom .
+
+    RIGHTSMALLBRACKET reduce using rule 41 (q_factor -> q_atom .)
+    OR              reduce using rule 41 (q_factor -> q_atom .)
+    AND             reduce using rule 41 (q_factor -> q_atom .)
+
+
+state 26
+
+    (42) q_factor -> NOT . q_factor
+    (41) q_factor -> . q_atom
+    (42) q_factor -> . NOT q_factor
+    (43) q_factor -> . LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET
+    (46) q_atom -> . q_equal_atom_3
+    (47) q_atom -> . q_equal_atom_2
+    (48) q_atom -> . q_sum_atom
+    (49) q_atom -> . me_atom
+    (50) q_equal_atom_3 -> . q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (51) q_equal_atom_3 -> . q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (58) q_equal_atom_2 -> . q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (59) q_equal_atom_2 -> . q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (52) q_sum_atom -> . q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (74) me_atom -> . a_expression_atom
+    (63) q_iden_3 -> . EQUALATMOST
+    (64) q_iden_3 -> . EQUALATLEAST
+    (65) q_iden_3 -> . EQUALFEW
+    (66) q_iden_2 -> . EQUALALL
+    (67) q_iden_2 -> . EQUALANY
+    (60) q_sum -> . SUM
+    (61) q_sum -> . SUMATLEAST
+    (62) q_sum -> . SUMATMOST
+    (75) a_expression_atom -> . a_expression EQUAL a_expression
+    (76) a_expression_atom -> . a_expression NOTEQUAL a_expression
+    (77) a_expression_atom -> . a_expression GREATEREQUAL a_expression
+    (78) a_expression_atom -> . a_expression GREATER a_expression
+    (79) a_expression_atom -> . a_expression LESSEQUAL a_expression
+    (80) a_expression_atom -> . a_expression LESS a_expression
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NOT             shift and go to state 26
+    LEFTSMALLBRACKET shift and go to state 19
+    EQUALATMOST     shift and go to state 36
+    EQUALATLEAST    shift and go to state 37
+    EQUALFEW        shift and go to state 38
+    EQUALALL        shift and go to state 39
+    EQUALANY        shift and go to state 40
+    SUM             shift and go to state 41
+    SUMATLEAST      shift and go to state 42
+    SUMATMOST       shift and go to state 43
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+
+    q_factor                       shift and go to state 64
+    q_atom                         shift and go to state 25
+    q_equal_atom_3                 shift and go to state 27
+    q_equal_atom_2                 shift and go to state 28
+    q_sum_atom                     shift and go to state 29
+    me_atom                        shift and go to state 30
+    q_iden_3                       shift and go to state 31
+    q_iden_2                       shift and go to state 33
+    q_sum                          shift and go to state 34
+    a_expression_atom              shift and go to state 35
+    a_expression                   shift and go to state 44
+    a_term                         shift and go to state 45
+    a_factor                       shift and go to state 46
+
+state 27
+
+    (46) q_atom -> q_equal_atom_3 .
+
+    RIGHTSMALLBRACKET reduce using rule 46 (q_atom -> q_equal_atom_3 .)
+    OR              reduce using rule 46 (q_atom -> q_equal_atom_3 .)
+    AND             reduce using rule 46 (q_atom -> q_equal_atom_3 .)
+
+
+state 28
+
+    (47) q_atom -> q_equal_atom_2 .
+
+    RIGHTSMALLBRACKET reduce using rule 47 (q_atom -> q_equal_atom_2 .)
+    OR              reduce using rule 47 (q_atom -> q_equal_atom_2 .)
+    AND             reduce using rule 47 (q_atom -> q_equal_atom_2 .)
+
+
+state 29
+
+    (48) q_atom -> q_sum_atom .
+
+    RIGHTSMALLBRACKET reduce using rule 48 (q_atom -> q_sum_atom .)
+    OR              reduce using rule 48 (q_atom -> q_sum_atom .)
+    AND             reduce using rule 48 (q_atom -> q_sum_atom .)
+
+
+state 30
+
+    (49) q_atom -> me_atom .
+
+    RIGHTSMALLBRACKET reduce using rule 49 (q_atom -> me_atom .)
+    OR              reduce using rule 49 (q_atom -> me_atom .)
+    AND             reduce using rule 49 (q_atom -> me_atom .)
+
+
+state 31
+
+    (50) q_equal_atom_3 -> q_iden_3 . LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (51) q_equal_atom_3 -> q_iden_3 . LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+
+    LEFTSMALLBRACKET shift and go to state 65
+
+
+state 32
+
+    (87) a_factor -> NUMBER .
+
+    TIMES           reduce using rule 87 (a_factor -> NUMBER .)
+    DIVIDE          reduce using rule 87 (a_factor -> NUMBER .)
+    EQUAL           reduce using rule 87 (a_factor -> NUMBER .)
+    NOTEQUAL        reduce using rule 87 (a_factor -> NUMBER .)
+    GREATEREQUAL    reduce using rule 87 (a_factor -> NUMBER .)
+    GREATER         reduce using rule 87 (a_factor -> NUMBER .)
+    LESSEQUAL       reduce using rule 87 (a_factor -> NUMBER .)
+    LESS            reduce using rule 87 (a_factor -> NUMBER .)
+    PLUS            reduce using rule 87 (a_factor -> NUMBER .)
+    MINUS           reduce using rule 87 (a_factor -> NUMBER .)
+    RIGHTSMALLBRACKET reduce using rule 87 (a_factor -> NUMBER .)
+    OR              reduce using rule 87 (a_factor -> NUMBER .)
+    AND             reduce using rule 87 (a_factor -> NUMBER .)
+
+
+state 33
+
+    (58) q_equal_atom_2 -> q_iden_2 . LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (59) q_equal_atom_2 -> q_iden_2 . LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+
+    LEFTSMALLBRACKET shift and go to state 66
+
+
+state 34
+
+    (52) q_sum_atom -> q_sum . LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+
+    LEFTSMALLBRACKET shift and go to state 67
+
+
+state 35
+
+    (74) me_atom -> a_expression_atom .
+
+    RIGHTSMALLBRACKET reduce using rule 74 (me_atom -> a_expression_atom .)
+    OR              reduce using rule 74 (me_atom -> a_expression_atom .)
+    AND             reduce using rule 74 (me_atom -> a_expression_atom .)
+
+
+state 36
+
+    (63) q_iden_3 -> EQUALATMOST .
+
+    LEFTSMALLBRACKET reduce using rule 63 (q_iden_3 -> EQUALATMOST .)
+
+
+state 37
+
+    (64) q_iden_3 -> EQUALATLEAST .
+
+    LEFTSMALLBRACKET reduce using rule 64 (q_iden_3 -> EQUALATLEAST .)
+
+
+state 38
+
+    (65) q_iden_3 -> EQUALFEW .
+
+    LEFTSMALLBRACKET reduce using rule 65 (q_iden_3 -> EQUALFEW .)
+
+
+state 39
+
+    (66) q_iden_2 -> EQUALALL .
+
+    LEFTSMALLBRACKET reduce using rule 66 (q_iden_2 -> EQUALALL .)
+
+
+state 40
+
+    (67) q_iden_2 -> EQUALANY .
+
+    LEFTSMALLBRACKET reduce using rule 67 (q_iden_2 -> EQUALANY .)
+
+
+state 41
+
+    (60) q_sum -> SUM .
+
+    LEFTSMALLBRACKET reduce using rule 60 (q_sum -> SUM .)
+
+
+state 42
+
+    (61) q_sum -> SUMATLEAST .
+
+    LEFTSMALLBRACKET reduce using rule 61 (q_sum -> SUMATLEAST .)
+
+
+state 43
+
+    (62) q_sum -> SUMATMOST .
+
+    LEFTSMALLBRACKET reduce using rule 62 (q_sum -> SUMATMOST .)
+
+
+state 44
+
+    (75) a_expression_atom -> a_expression . EQUAL a_expression
+    (76) a_expression_atom -> a_expression . NOTEQUAL a_expression
+    (77) a_expression_atom -> a_expression . GREATEREQUAL a_expression
+    (78) a_expression_atom -> a_expression . GREATER a_expression
+    (79) a_expression_atom -> a_expression . LESSEQUAL a_expression
+    (80) a_expression_atom -> a_expression . LESS a_expression
+    (81) a_expression -> a_expression . PLUS a_term
+    (82) a_expression -> a_expression . MINUS a_term
+
+    EQUAL           shift and go to state 68
+    NOTEQUAL        shift and go to state 69
+    GREATEREQUAL    shift and go to state 70
+    GREATER         shift and go to state 71
+    LESSEQUAL       shift and go to state 72
+    LESS            shift and go to state 73
+    PLUS            shift and go to state 74
+    MINUS           shift and go to state 75
+
+
+state 45
+
+    (83) a_expression -> a_term .
+    (84) a_term -> a_term . TIMES a_factor
+    (85) a_term -> a_term . DIVIDE a_factor
+
+    EQUAL           reduce using rule 83 (a_expression -> a_term .)
+    NOTEQUAL        reduce using rule 83 (a_expression -> a_term .)
+    GREATEREQUAL    reduce using rule 83 (a_expression -> a_term .)
+    GREATER         reduce using rule 83 (a_expression -> a_term .)
+    LESSEQUAL       reduce using rule 83 (a_expression -> a_term .)
+    LESS            reduce using rule 83 (a_expression -> a_term .)
+    PLUS            reduce using rule 83 (a_expression -> a_term .)
+    MINUS           reduce using rule 83 (a_expression -> a_term .)
+    RIGHTSMALLBRACKET reduce using rule 83 (a_expression -> a_term .)
+    OR              reduce using rule 83 (a_expression -> a_term .)
+    AND             reduce using rule 83 (a_expression -> a_term .)
+    TIMES           shift and go to state 76
+    DIVIDE          shift and go to state 77
+
+
+state 46
+
+    (86) a_term -> a_factor .
+
+    TIMES           reduce using rule 86 (a_term -> a_factor .)
+    DIVIDE          reduce using rule 86 (a_term -> a_factor .)
+    EQUAL           reduce using rule 86 (a_term -> a_factor .)
+    NOTEQUAL        reduce using rule 86 (a_term -> a_factor .)
+    GREATEREQUAL    reduce using rule 86 (a_term -> a_factor .)
+    GREATER         reduce using rule 86 (a_term -> a_factor .)
+    LESSEQUAL       reduce using rule 86 (a_term -> a_factor .)
+    LESS            reduce using rule 86 (a_term -> a_factor .)
+    PLUS            reduce using rule 86 (a_term -> a_factor .)
+    MINUS           reduce using rule 86 (a_term -> a_factor .)
+    RIGHTSMALLBRACKET reduce using rule 86 (a_term -> a_factor .)
+    OR              reduce using rule 86 (a_term -> a_factor .)
+    AND             reduce using rule 86 (a_term -> a_factor .)
+
+
+state 47
+
+    (88) a_factor -> ALIAS . LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+
+    LEFTSQRBRACKET  shift and go to state 78
+
+
+state 48
+
+    (9) ed_feature -> LEFTSMALLBRACKET ed_feature_inner . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 79
+
+
+state 49
+
+    (10) ed_feature_inner -> entity_prop_prob .
+    (11) entity_prop_prob -> entity_prop_prob . SEMICOLON entity_prop_prob_atom
+
+    RIGHTSMALLBRACKET reduce using rule 10 (ed_feature_inner -> entity_prop_prob .)
+    SEMICOLON       shift and go to state 80
+
+
+state 50
+
+    (12) entity_prop_prob -> entity_prop_prob_atom .
+
+    SEMICOLON       reduce using rule 12 (entity_prop_prob -> entity_prop_prob_atom .)
+    RIGHTSMALLBRACKET reduce using rule 12 (entity_prop_prob -> entity_prop_prob_atom .)
+
+
+state 51
+
+    (13) entity_prop_prob_atom -> IDEN .
+
+    SEMICOLON       reduce using rule 13 (entity_prop_prob_atom -> IDEN .)
+    RIGHTSMALLBRACKET reduce using rule 13 (entity_prop_prob_atom -> IDEN .)
+
+
+state 52
+
+    (14) entity_prop_prob_atom -> NUMBER .
+    (15) entity_prop_prob_atom -> NUMBER . DOUBLECOLON IDEN
+    (16) entity_prop_prob_atom -> NUMBER . DOUBLECOLON NUMBER
+
+    SEMICOLON       reduce using rule 14 (entity_prop_prob_atom -> NUMBER .)
+    RIGHTSMALLBRACKET reduce using rule 14 (entity_prop_prob_atom -> NUMBER .)
+    DOUBLECOLON     shift and go to state 81
+
+
+state 53
+
+    (17) entity_prop_prob_atom -> FLOAT . DOUBLECOLON IDEN
+    (18) entity_prop_prob_atom -> FLOAT . DOUBLECOLON NUMBER
+
+    DOUBLECOLON     shift and go to state 82
+
+
+state 54
+
+    (30) entity_action -> ALIAS ASSIGNMENT ALIAS DOT . ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+
+    ROLL            shift and go to state 83
+
+
+state 55
+
+    (31) entity_action -> ALIAS ASSIGNMENT entity_initialize DOT . ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+
+    ROLL            shift and go to state 84
+
+
+state 56
+
+    (20) entity_initialize -> IDEN ei_params . ei_number
+    (29) ei_number -> . LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE
+
+    LEFTCURLYBRACE  shift and go to state 86
+
+    ei_number                      shift and go to state 85
+
+state 57
+
+    (21) ei_params -> LEFTSMALLBRACKET . float_list ei_flag_option RIGHTSMALLBRACKET
+    (23) float_list -> . float_list COMMA FLOAT
+    (24) float_list -> . float_list COMMA NUMBER
+    (25) float_list -> . FLOAT
+    (26) float_list -> . NUMBER
+
+    FLOAT           shift and go to state 88
+    NUMBER          shift and go to state 89
+
+    float_list                     shift and go to state 87
+
+state 58
+
+    (22) ei_params -> empty .
+
+    LEFTCURLYBRACE  reduce using rule 22 (ei_params -> empty .)
+
+
+state 59
+
+    (43) q_factor -> LEFTSMALLBRACKET q_expr . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 90
+
+
+state 60
+
+    (89) a_factor -> LEFTSMALLBRACKET a_expression . RIGHTSMALLBRACKET
+    (81) a_expression -> a_expression . PLUS a_term
+    (82) a_expression -> a_expression . MINUS a_term
+    (75) a_expression_atom -> a_expression . EQUAL a_expression
+    (76) a_expression_atom -> a_expression . NOTEQUAL a_expression
+    (77) a_expression_atom -> a_expression . GREATEREQUAL a_expression
+    (78) a_expression_atom -> a_expression . GREATER a_expression
+    (79) a_expression_atom -> a_expression . LESSEQUAL a_expression
+    (80) a_expression_atom -> a_expression . LESS a_expression
+
+    RIGHTSMALLBRACKET shift and go to state 91
+    PLUS            shift and go to state 74
+    MINUS           shift and go to state 75
+    EQUAL           shift and go to state 68
+    NOTEQUAL        shift and go to state 69
+    GREATEREQUAL    shift and go to state 70
+    GREATER         shift and go to state 71
+    LESSEQUAL       shift and go to state 72
+    LESS            shift and go to state 73
+
+
+state 61
+
+    (34) query_wrap -> QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET .
+
+    ENTITY          reduce using rule 34 (query_wrap -> QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET .)
+    ALIAS           reduce using rule 34 (query_wrap -> QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET .)
+    QUERY           reduce using rule 34 (query_wrap -> QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET .)
+    $end            reduce using rule 34 (query_wrap -> QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET .)
+
+
+state 62
+
+    (35) q_expr -> q_term_list OR . q_term
+    (39) q_term_list -> q_term_list OR . q_term
+    (37) q_term -> . q_factor_list AND q_factor
+    (38) q_term -> . q_factor
+    (44) q_factor_list -> . q_factor_list AND q_factor
+    (45) q_factor_list -> . q_factor
+    (41) q_factor -> . q_atom
+    (42) q_factor -> . NOT q_factor
+    (43) q_factor -> . LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET
+    (46) q_atom -> . q_equal_atom_3
+    (47) q_atom -> . q_equal_atom_2
+    (48) q_atom -> . q_sum_atom
+    (49) q_atom -> . me_atom
+    (50) q_equal_atom_3 -> . q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (51) q_equal_atom_3 -> . q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (58) q_equal_atom_2 -> . q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (59) q_equal_atom_2 -> . q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (52) q_sum_atom -> . q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (74) me_atom -> . a_expression_atom
+    (63) q_iden_3 -> . EQUALATMOST
+    (64) q_iden_3 -> . EQUALATLEAST
+    (65) q_iden_3 -> . EQUALFEW
+    (66) q_iden_2 -> . EQUALALL
+    (67) q_iden_2 -> . EQUALANY
+    (60) q_sum -> . SUM
+    (61) q_sum -> . SUMATLEAST
+    (62) q_sum -> . SUMATMOST
+    (75) a_expression_atom -> . a_expression EQUAL a_expression
+    (76) a_expression_atom -> . a_expression NOTEQUAL a_expression
+    (77) a_expression_atom -> . a_expression GREATEREQUAL a_expression
+    (78) a_expression_atom -> . a_expression GREATER a_expression
+    (79) a_expression_atom -> . a_expression LESSEQUAL a_expression
+    (80) a_expression_atom -> . a_expression LESS a_expression
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NOT             shift and go to state 26
+    LEFTSMALLBRACKET shift and go to state 19
+    EQUALATMOST     shift and go to state 36
+    EQUALATLEAST    shift and go to state 37
+    EQUALFEW        shift and go to state 38
+    EQUALALL        shift and go to state 39
+    EQUALANY        shift and go to state 40
+    SUM             shift and go to state 41
+    SUMATLEAST      shift and go to state 42
+    SUMATMOST       shift and go to state 43
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+
+    q_term                         shift and go to state 92
+    q_factor_list                  shift and go to state 23
+    q_factor                       shift and go to state 24
+    q_atom                         shift and go to state 25
+    q_equal_atom_3                 shift and go to state 27
+    q_equal_atom_2                 shift and go to state 28
+    q_sum_atom                     shift and go to state 29
+    me_atom                        shift and go to state 30
+    q_iden_3                       shift and go to state 31
+    q_iden_2                       shift and go to state 33
+    q_sum                          shift and go to state 34
+    a_expression_atom              shift and go to state 35
+    a_expression                   shift and go to state 44
+    a_term                         shift and go to state 45
+    a_factor                       shift and go to state 46
+
+state 63
+
+    (37) q_term -> q_factor_list AND . q_factor
+    (44) q_factor_list -> q_factor_list AND . q_factor
+    (41) q_factor -> . q_atom
+    (42) q_factor -> . NOT q_factor
+    (43) q_factor -> . LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET
+    (46) q_atom -> . q_equal_atom_3
+    (47) q_atom -> . q_equal_atom_2
+    (48) q_atom -> . q_sum_atom
+    (49) q_atom -> . me_atom
+    (50) q_equal_atom_3 -> . q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (51) q_equal_atom_3 -> . q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (58) q_equal_atom_2 -> . q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (59) q_equal_atom_2 -> . q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (52) q_sum_atom -> . q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (74) me_atom -> . a_expression_atom
+    (63) q_iden_3 -> . EQUALATMOST
+    (64) q_iden_3 -> . EQUALATLEAST
+    (65) q_iden_3 -> . EQUALFEW
+    (66) q_iden_2 -> . EQUALALL
+    (67) q_iden_2 -> . EQUALANY
+    (60) q_sum -> . SUM
+    (61) q_sum -> . SUMATLEAST
+    (62) q_sum -> . SUMATMOST
+    (75) a_expression_atom -> . a_expression EQUAL a_expression
+    (76) a_expression_atom -> . a_expression NOTEQUAL a_expression
+    (77) a_expression_atom -> . a_expression GREATEREQUAL a_expression
+    (78) a_expression_atom -> . a_expression GREATER a_expression
+    (79) a_expression_atom -> . a_expression LESSEQUAL a_expression
+    (80) a_expression_atom -> . a_expression LESS a_expression
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NOT             shift and go to state 26
+    LEFTSMALLBRACKET shift and go to state 19
+    EQUALATMOST     shift and go to state 36
+    EQUALATLEAST    shift and go to state 37
+    EQUALFEW        shift and go to state 38
+    EQUALALL        shift and go to state 39
+    EQUALANY        shift and go to state 40
+    SUM             shift and go to state 41
+    SUMATLEAST      shift and go to state 42
+    SUMATMOST       shift and go to state 43
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+
+    q_factor                       shift and go to state 93
+    q_atom                         shift and go to state 25
+    q_equal_atom_3                 shift and go to state 27
+    q_equal_atom_2                 shift and go to state 28
+    q_sum_atom                     shift and go to state 29
+    me_atom                        shift and go to state 30
+    q_iden_3                       shift and go to state 31
+    q_iden_2                       shift and go to state 33
+    q_sum                          shift and go to state 34
+    a_expression_atom              shift and go to state 35
+    a_expression                   shift and go to state 44
+    a_term                         shift and go to state 45
+    a_factor                       shift and go to state 46
+
+state 64
+
+    (42) q_factor -> NOT q_factor .
+
+    RIGHTSMALLBRACKET reduce using rule 42 (q_factor -> NOT q_factor .)
+    OR              reduce using rule 42 (q_factor -> NOT q_factor .)
+    AND             reduce using rule 42 (q_factor -> NOT q_factor .)
+
+
+state 65
+
+    (50) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET . NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (51) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET . NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 94
+
+
+state 66
+
+    (58) q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET . q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (59) q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET . q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (68) q_alias_concat_wrap -> . alias_slice
+    (69) q_alias_concat_wrap -> . LEFTSQRBRACKET q_alias_concat RIGHTSQRBRACKET
+    (72) alias_slice -> . ALIAS
+    (73) alias_slice -> . ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    LEFTSQRBRACKET  shift and go to state 97
+    ALIAS           shift and go to state 98
+
+    q_alias_concat_wrap            shift and go to state 95
+    alias_slice                    shift and go to state 96
+
+state 67
+
+    (52) q_sum_atom -> q_sum LEFTSMALLBRACKET . q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (53) q_alias_sum_concat_wrap -> . LEFTSMALLBRACKET q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap RIGHTSMALLBRACKET
+    (54) q_alias_sum_concat_wrap -> . q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap
+    (55) q_alias_sum_concat_wrap -> . q_alias_sum_concat_wrap_atom
+    (56) q_alias_sum_concat_wrap_atom -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (57) q_alias_sum_concat_wrap_atom -> . ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    LEFTSMALLBRACKET shift and go to state 99
+    ALIAS           shift and go to state 102
+
+    q_alias_sum_concat_wrap        shift and go to state 100
+    q_alias_sum_concat_wrap_atom   shift and go to state 101
+
+state 68
+
+    (75) a_expression_atom -> a_expression EQUAL . a_expression
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    LEFTSMALLBRACKET shift and go to state 104
+
+    a_expression                   shift and go to state 103
+    a_term                         shift and go to state 45
+    a_factor                       shift and go to state 46
+
+state 69
+
+    (76) a_expression_atom -> a_expression NOTEQUAL . a_expression
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    LEFTSMALLBRACKET shift and go to state 104
+
+    a_expression                   shift and go to state 105
+    a_term                         shift and go to state 45
+    a_factor                       shift and go to state 46
+
+state 70
+
+    (77) a_expression_atom -> a_expression GREATEREQUAL . a_expression
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    LEFTSMALLBRACKET shift and go to state 104
+
+    a_expression                   shift and go to state 106
+    a_term                         shift and go to state 45
+    a_factor                       shift and go to state 46
+
+state 71
+
+    (78) a_expression_atom -> a_expression GREATER . a_expression
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    LEFTSMALLBRACKET shift and go to state 104
+
+    a_expression                   shift and go to state 107
+    a_term                         shift and go to state 45
+    a_factor                       shift and go to state 46
+
+state 72
+
+    (79) a_expression_atom -> a_expression LESSEQUAL . a_expression
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    LEFTSMALLBRACKET shift and go to state 104
+
+    a_expression                   shift and go to state 108
+    a_term                         shift and go to state 45
+    a_factor                       shift and go to state 46
+
+state 73
+
+    (80) a_expression_atom -> a_expression LESS . a_expression
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    LEFTSMALLBRACKET shift and go to state 104
+
+    a_expression                   shift and go to state 109
+    a_term                         shift and go to state 45
+    a_factor                       shift and go to state 46
+
+state 74
+
+    (81) a_expression -> a_expression PLUS . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    LEFTSMALLBRACKET shift and go to state 104
+
+    a_term                         shift and go to state 110
+    a_factor                       shift and go to state 46
+
+state 75
+
+    (82) a_expression -> a_expression MINUS . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    LEFTSMALLBRACKET shift and go to state 104
+
+    a_term                         shift and go to state 111
+    a_factor                       shift and go to state 46
+
+state 76
+
+    (84) a_term -> a_term TIMES . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    LEFTSMALLBRACKET shift and go to state 104
+
+    a_factor                       shift and go to state 112
+
+state 77
+
+    (85) a_term -> a_term DIVIDE . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    LEFTSMALLBRACKET shift and go to state 104
+
+    a_factor                       shift and go to state 113
+
+state 78
+
+    (88) a_factor -> ALIAS LEFTSQRBRACKET . NUMBER RIGHTSQRBRACKET
+
+    NUMBER          shift and go to state 114
+
+
+state 79
+
+    (9) ed_feature -> LEFTSMALLBRACKET ed_feature_inner RIGHTSMALLBRACKET .
+
+    ENTITY          reduce using rule 9 (ed_feature -> LEFTSMALLBRACKET ed_feature_inner RIGHTSMALLBRACKET .)
+    ALIAS           reduce using rule 9 (ed_feature -> LEFTSMALLBRACKET ed_feature_inner RIGHTSMALLBRACKET .)
+    QUERY           reduce using rule 9 (ed_feature -> LEFTSMALLBRACKET ed_feature_inner RIGHTSMALLBRACKET .)
+    $end            reduce using rule 9 (ed_feature -> LEFTSMALLBRACKET ed_feature_inner RIGHTSMALLBRACKET .)
+
+
+state 80
+
+    (11) entity_prop_prob -> entity_prop_prob SEMICOLON . entity_prop_prob_atom
+    (13) entity_prop_prob_atom -> . IDEN
+    (14) entity_prop_prob_atom -> . NUMBER
+    (15) entity_prop_prob_atom -> . NUMBER DOUBLECOLON IDEN
+    (16) entity_prop_prob_atom -> . NUMBER DOUBLECOLON NUMBER
+    (17) entity_prop_prob_atom -> . FLOAT DOUBLECOLON IDEN
+    (18) entity_prop_prob_atom -> . FLOAT DOUBLECOLON NUMBER
+
+    IDEN            shift and go to state 51
+    NUMBER          shift and go to state 52
+    FLOAT           shift and go to state 53
+
+    entity_prop_prob_atom          shift and go to state 115
+
+state 81
+
+    (15) entity_prop_prob_atom -> NUMBER DOUBLECOLON . IDEN
+    (16) entity_prop_prob_atom -> NUMBER DOUBLECOLON . NUMBER
+
+    IDEN            shift and go to state 117
+    NUMBER          shift and go to state 116
+
+
+state 82
+
+    (17) entity_prop_prob_atom -> FLOAT DOUBLECOLON . IDEN
+    (18) entity_prop_prob_atom -> FLOAT DOUBLECOLON . NUMBER
+
+    IDEN            shift and go to state 118
+    NUMBER          shift and go to state 119
+
+
+state 83
+
+    (30) entity_action -> ALIAS ASSIGNMENT ALIAS DOT ROLL . LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+
+    LEFTSMALLBRACKET shift and go to state 120
+
+
+state 84
+
+    (31) entity_action -> ALIAS ASSIGNMENT entity_initialize DOT ROLL . LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
+
+    LEFTSMALLBRACKET shift and go to state 121
+
+
+state 85
+
+    (20) entity_initialize -> IDEN ei_params ei_number .
+
+    DOT             reduce using rule 20 (entity_initialize -> IDEN ei_params ei_number .)
+    ENTITY          reduce using rule 20 (entity_initialize -> IDEN ei_params ei_number .)
+    ALIAS           reduce using rule 20 (entity_initialize -> IDEN ei_params ei_number .)
+    QUERY           reduce using rule 20 (entity_initialize -> IDEN ei_params ei_number .)
+    $end            reduce using rule 20 (entity_initialize -> IDEN ei_params ei_number .)
+
+
+state 86
+
+    (29) ei_number -> LEFTCURLYBRACE . NUMBER RIGHTCURLYBRACE
+
+    NUMBER          shift and go to state 122
+
+
+state 87
+
+    (21) ei_params -> LEFTSMALLBRACKET float_list . ei_flag_option RIGHTSMALLBRACKET
+    (23) float_list -> float_list . COMMA FLOAT
+    (24) float_list -> float_list . COMMA NUMBER
+    (27) ei_flag_option -> . BAR IDEN
+    (28) ei_flag_option -> . empty
+    (7) empty -> .
+
+    COMMA           shift and go to state 124
+    BAR             shift and go to state 125
+    RIGHTSMALLBRACKET reduce using rule 7 (empty -> .)
+
+    ei_flag_option                 shift and go to state 123
+    empty                          shift and go to state 126
+
+state 88
+
+    (25) float_list -> FLOAT .
+
+    COMMA           reduce using rule 25 (float_list -> FLOAT .)
+    BAR             reduce using rule 25 (float_list -> FLOAT .)
+    RIGHTSMALLBRACKET reduce using rule 25 (float_list -> FLOAT .)
+
+
+state 89
+
+    (26) float_list -> NUMBER .
+
+    COMMA           reduce using rule 26 (float_list -> NUMBER .)
+    BAR             reduce using rule 26 (float_list -> NUMBER .)
+    RIGHTSMALLBRACKET reduce using rule 26 (float_list -> NUMBER .)
+
+
+state 90
+
+    (43) q_factor -> LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET .
+
+    RIGHTSMALLBRACKET reduce using rule 43 (q_factor -> LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET .)
+    OR              reduce using rule 43 (q_factor -> LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET .)
+    AND             reduce using rule 43 (q_factor -> LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET .)
+
+
+state 91
+
+    (89) a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .
+
+    TIMES           reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    DIVIDE          reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    EQUAL           reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    NOTEQUAL        reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    GREATEREQUAL    reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    GREATER         reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    LESSEQUAL       reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    LESS            reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    PLUS            reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    MINUS           reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    RIGHTSMALLBRACKET reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    OR              reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+    AND             reduce using rule 89 (a_factor -> LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET .)
+
+
+state 92
+
+    (35) q_expr -> q_term_list OR q_term .
+    (39) q_term_list -> q_term_list OR q_term .
+
+    RIGHTSMALLBRACKET reduce using rule 35 (q_expr -> q_term_list OR q_term .)
+    OR              reduce using rule 39 (q_term_list -> q_term_list OR q_term .)
+
+
+state 93
+
+    (37) q_term -> q_factor_list AND q_factor .
+    (44) q_factor_list -> q_factor_list AND q_factor .
+
+    RIGHTSMALLBRACKET reduce using rule 37 (q_term -> q_factor_list AND q_factor .)
+    OR              reduce using rule 37 (q_term -> q_factor_list AND q_factor .)
+    AND             reduce using rule 44 (q_factor_list -> q_factor_list AND q_factor .)
+
+
+state 94
+
+    (50) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER . COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (51) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER . COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+
+    COMMA           shift and go to state 127
+
+
+state 95
+
+    (58) q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap . COMMA IDEN RIGHTSMALLBRACKET
+    (59) q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap . COMMA NUMBER RIGHTSMALLBRACKET
+
+    COMMA           shift and go to state 128
+
+
+state 96
+
+    (68) q_alias_concat_wrap -> alias_slice .
+
+    COMMA           reduce using rule 68 (q_alias_concat_wrap -> alias_slice .)
+
+
+state 97
+
+    (69) q_alias_concat_wrap -> LEFTSQRBRACKET . q_alias_concat RIGHTSQRBRACKET
+    (70) q_alias_concat -> . q_alias_concat BAR alias_slice
+    (71) q_alias_concat -> . alias_slice
+    (72) alias_slice -> . ALIAS
+    (73) alias_slice -> . ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    ALIAS           shift and go to state 98
+
+    q_alias_concat                 shift and go to state 129
+    alias_slice                    shift and go to state 130
+
+state 98
+
+    (72) alias_slice -> ALIAS .
+    (73) alias_slice -> ALIAS . LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    COMMA           reduce using rule 72 (alias_slice -> ALIAS .)
+    RIGHTSQRBRACKET reduce using rule 72 (alias_slice -> ALIAS .)
+    BAR             reduce using rule 72 (alias_slice -> ALIAS .)
+    LEFTSQRBRACKET  shift and go to state 131
+
+
+state 99
+
+    (53) q_alias_sum_concat_wrap -> LEFTSMALLBRACKET . q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap RIGHTSMALLBRACKET
+    (56) q_alias_sum_concat_wrap_atom -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (57) q_alias_sum_concat_wrap_atom -> . ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    ALIAS           shift and go to state 102
+
+    q_alias_sum_concat_wrap_atom   shift and go to state 132
+
+state 100
+
+    (52) q_sum_atom -> q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap . COMMA NUMBER RIGHTSMALLBRACKET
+
+    COMMA           shift and go to state 133
+
+
+state 101
+
+    (54) q_alias_sum_concat_wrap -> q_alias_sum_concat_wrap_atom . BAR q_alias_sum_concat_wrap
+    (55) q_alias_sum_concat_wrap -> q_alias_sum_concat_wrap_atom .
+
+    BAR             shift and go to state 134
+    COMMA           reduce using rule 55 (q_alias_sum_concat_wrap -> q_alias_sum_concat_wrap_atom .)
+    RIGHTSMALLBRACKET reduce using rule 55 (q_alias_sum_concat_wrap -> q_alias_sum_concat_wrap_atom .)
+
+
+state 102
+
+    (56) q_alias_sum_concat_wrap_atom -> ALIAS . LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (57) q_alias_sum_concat_wrap_atom -> ALIAS . LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    LEFTSQRBRACKET  shift and go to state 135
+
+
+state 103
+
+    (75) a_expression_atom -> a_expression EQUAL a_expression .
+    (81) a_expression -> a_expression . PLUS a_term
+    (82) a_expression -> a_expression . MINUS a_term
+
+    RIGHTSMALLBRACKET reduce using rule 75 (a_expression_atom -> a_expression EQUAL a_expression .)
+    OR              reduce using rule 75 (a_expression_atom -> a_expression EQUAL a_expression .)
+    AND             reduce using rule 75 (a_expression_atom -> a_expression EQUAL a_expression .)
+    PLUS            shift and go to state 74
+    MINUS           shift and go to state 75
+
+
+state 104
+
+    (89) a_factor -> LEFTSMALLBRACKET . a_expression RIGHTSMALLBRACKET
+    (81) a_expression -> . a_expression PLUS a_term
+    (82) a_expression -> . a_expression MINUS a_term
+    (83) a_expression -> . a_term
+    (84) a_term -> . a_term TIMES a_factor
+    (85) a_term -> . a_term DIVIDE a_factor
+    (86) a_term -> . a_factor
+    (87) a_factor -> . NUMBER
+    (88) a_factor -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (89) a_factor -> . LEFTSMALLBRACKET a_expression RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 32
+    ALIAS           shift and go to state 47
+    LEFTSMALLBRACKET shift and go to state 104
+
+    a_expression                   shift and go to state 136
+    a_term                         shift and go to state 45
+    a_factor                       shift and go to state 46
+
+state 105
+
+    (76) a_expression_atom -> a_expression NOTEQUAL a_expression .
+    (81) a_expression -> a_expression . PLUS a_term
+    (82) a_expression -> a_expression . MINUS a_term
+
+    RIGHTSMALLBRACKET reduce using rule 76 (a_expression_atom -> a_expression NOTEQUAL a_expression .)
+    OR              reduce using rule 76 (a_expression_atom -> a_expression NOTEQUAL a_expression .)
+    AND             reduce using rule 76 (a_expression_atom -> a_expression NOTEQUAL a_expression .)
+    PLUS            shift and go to state 74
+    MINUS           shift and go to state 75
+
+
+state 106
+
+    (77) a_expression_atom -> a_expression GREATEREQUAL a_expression .
+    (81) a_expression -> a_expression . PLUS a_term
+    (82) a_expression -> a_expression . MINUS a_term
+
+    RIGHTSMALLBRACKET reduce using rule 77 (a_expression_atom -> a_expression GREATEREQUAL a_expression .)
+    OR              reduce using rule 77 (a_expression_atom -> a_expression GREATEREQUAL a_expression .)
+    AND             reduce using rule 77 (a_expression_atom -> a_expression GREATEREQUAL a_expression .)
+    PLUS            shift and go to state 74
+    MINUS           shift and go to state 75
+
+
+state 107
+
+    (78) a_expression_atom -> a_expression GREATER a_expression .
+    (81) a_expression -> a_expression . PLUS a_term
+    (82) a_expression -> a_expression . MINUS a_term
+
+    RIGHTSMALLBRACKET reduce using rule 78 (a_expression_atom -> a_expression GREATER a_expression .)
+    OR              reduce using rule 78 (a_expression_atom -> a_expression GREATER a_expression .)
+    AND             reduce using rule 78 (a_expression_atom -> a_expression GREATER a_expression .)
+    PLUS            shift and go to state 74
+    MINUS           shift and go to state 75
+
+
+state 108
+
+    (79) a_expression_atom -> a_expression LESSEQUAL a_expression .
+    (81) a_expression -> a_expression . PLUS a_term
+    (82) a_expression -> a_expression . MINUS a_term
+
+    RIGHTSMALLBRACKET reduce using rule 79 (a_expression_atom -> a_expression LESSEQUAL a_expression .)
+    OR              reduce using rule 79 (a_expression_atom -> a_expression LESSEQUAL a_expression .)
+    AND             reduce using rule 79 (a_expression_atom -> a_expression LESSEQUAL a_expression .)
+    PLUS            shift and go to state 74
+    MINUS           shift and go to state 75
+
+
+state 109
+
+    (80) a_expression_atom -> a_expression LESS a_expression .
+    (81) a_expression -> a_expression . PLUS a_term
+    (82) a_expression -> a_expression . MINUS a_term
+
+    RIGHTSMALLBRACKET reduce using rule 80 (a_expression_atom -> a_expression LESS a_expression .)
+    OR              reduce using rule 80 (a_expression_atom -> a_expression LESS a_expression .)
+    AND             reduce using rule 80 (a_expression_atom -> a_expression LESS a_expression .)
+    PLUS            shift and go to state 74
+    MINUS           shift and go to state 75
+
+
+state 110
+
+    (81) a_expression -> a_expression PLUS a_term .
+    (84) a_term -> a_term . TIMES a_factor
+    (85) a_term -> a_term . DIVIDE a_factor
+
+    EQUAL           reduce using rule 81 (a_expression -> a_expression PLUS a_term .)
+    NOTEQUAL        reduce using rule 81 (a_expression -> a_expression PLUS a_term .)
+    GREATEREQUAL    reduce using rule 81 (a_expression -> a_expression PLUS a_term .)
+    GREATER         reduce using rule 81 (a_expression -> a_expression PLUS a_term .)
+    LESSEQUAL       reduce using rule 81 (a_expression -> a_expression PLUS a_term .)
+    LESS            reduce using rule 81 (a_expression -> a_expression PLUS a_term .)
+    PLUS            reduce using rule 81 (a_expression -> a_expression PLUS a_term .)
+    MINUS           reduce using rule 81 (a_expression -> a_expression PLUS a_term .)
+    RIGHTSMALLBRACKET reduce using rule 81 (a_expression -> a_expression PLUS a_term .)
+    OR              reduce using rule 81 (a_expression -> a_expression PLUS a_term .)
+    AND             reduce using rule 81 (a_expression -> a_expression PLUS a_term .)
+    TIMES           shift and go to state 76
+    DIVIDE          shift and go to state 77
+
+
+state 111
+
+    (82) a_expression -> a_expression MINUS a_term .
+    (84) a_term -> a_term . TIMES a_factor
+    (85) a_term -> a_term . DIVIDE a_factor
+
+    EQUAL           reduce using rule 82 (a_expression -> a_expression MINUS a_term .)
+    NOTEQUAL        reduce using rule 82 (a_expression -> a_expression MINUS a_term .)
+    GREATEREQUAL    reduce using rule 82 (a_expression -> a_expression MINUS a_term .)
+    GREATER         reduce using rule 82 (a_expression -> a_expression MINUS a_term .)
+    LESSEQUAL       reduce using rule 82 (a_expression -> a_expression MINUS a_term .)
+    LESS            reduce using rule 82 (a_expression -> a_expression MINUS a_term .)
+    PLUS            reduce using rule 82 (a_expression -> a_expression MINUS a_term .)
+    MINUS           reduce using rule 82 (a_expression -> a_expression MINUS a_term .)
+    RIGHTSMALLBRACKET reduce using rule 82 (a_expression -> a_expression MINUS a_term .)
+    OR              reduce using rule 82 (a_expression -> a_expression MINUS a_term .)
+    AND             reduce using rule 82 (a_expression -> a_expression MINUS a_term .)
+    TIMES           shift and go to state 76
+    DIVIDE          shift and go to state 77
+
+
+state 112
+
+    (84) a_term -> a_term TIMES a_factor .
+
+    TIMES           reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    DIVIDE          reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    EQUAL           reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    NOTEQUAL        reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    GREATEREQUAL    reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    GREATER         reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    LESSEQUAL       reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    LESS            reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    PLUS            reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    MINUS           reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    RIGHTSMALLBRACKET reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    OR              reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+    AND             reduce using rule 84 (a_term -> a_term TIMES a_factor .)
+
+
+state 113
+
+    (85) a_term -> a_term DIVIDE a_factor .
+
+    TIMES           reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    DIVIDE          reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    EQUAL           reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    NOTEQUAL        reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    GREATEREQUAL    reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    GREATER         reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    LESSEQUAL       reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    LESS            reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    PLUS            reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    MINUS           reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    RIGHTSMALLBRACKET reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    OR              reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+    AND             reduce using rule 85 (a_term -> a_term DIVIDE a_factor .)
+
+
+state 114
+
+    (88) a_factor -> ALIAS LEFTSQRBRACKET NUMBER . RIGHTSQRBRACKET
+
+    RIGHTSQRBRACKET shift and go to state 137
+
+
+state 115
+
+    (11) entity_prop_prob -> entity_prop_prob SEMICOLON entity_prop_prob_atom .
+
+    SEMICOLON       reduce using rule 11 (entity_prop_prob -> entity_prop_prob SEMICOLON entity_prop_prob_atom .)
+    RIGHTSMALLBRACKET reduce using rule 11 (entity_prop_prob -> entity_prop_prob SEMICOLON entity_prop_prob_atom .)
+
+
+state 116
+
+    (16) entity_prop_prob_atom -> NUMBER DOUBLECOLON NUMBER .
+
+    SEMICOLON       reduce using rule 16 (entity_prop_prob_atom -> NUMBER DOUBLECOLON NUMBER .)
+    RIGHTSMALLBRACKET reduce using rule 16 (entity_prop_prob_atom -> NUMBER DOUBLECOLON NUMBER .)
+
+
+state 117
+
+    (15) entity_prop_prob_atom -> NUMBER DOUBLECOLON IDEN .
+
+    SEMICOLON       reduce using rule 15 (entity_prop_prob_atom -> NUMBER DOUBLECOLON IDEN .)
+    RIGHTSMALLBRACKET reduce using rule 15 (entity_prop_prob_atom -> NUMBER DOUBLECOLON IDEN .)
+
+
+state 118
+
+    (17) entity_prop_prob_atom -> FLOAT DOUBLECOLON IDEN .
+
+    SEMICOLON       reduce using rule 17 (entity_prop_prob_atom -> FLOAT DOUBLECOLON IDEN .)
+    RIGHTSMALLBRACKET reduce using rule 17 (entity_prop_prob_atom -> FLOAT DOUBLECOLON IDEN .)
+
+
+state 119
+
+    (18) entity_prop_prob_atom -> FLOAT DOUBLECOLON NUMBER .
+
+    SEMICOLON       reduce using rule 18 (entity_prop_prob_atom -> FLOAT DOUBLECOLON NUMBER .)
+    RIGHTSMALLBRACKET reduce using rule 18 (entity_prop_prob_atom -> FLOAT DOUBLECOLON NUMBER .)
+
+
+state 120
+
+    (30) entity_action -> ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET . option_number RIGHTSMALLBRACKET
+    (32) option_number -> . NUMBER
+    (33) option_number -> . empty
+    (7) empty -> .
+
+    NUMBER          shift and go to state 139
+    RIGHTSMALLBRACKET reduce using rule 7 (empty -> .)
+
+    option_number                  shift and go to state 138
+    empty                          shift and go to state 140
+
+state 121
+
+    (31) entity_action -> ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET . option_number RIGHTSMALLBRACKET
+    (32) option_number -> . NUMBER
+    (33) option_number -> . empty
+    (7) empty -> .
+
+    NUMBER          shift and go to state 139
+    RIGHTSMALLBRACKET reduce using rule 7 (empty -> .)
+
+    option_number                  shift and go to state 141
+    empty                          shift and go to state 140
+
+state 122
+
+    (29) ei_number -> LEFTCURLYBRACE NUMBER . RIGHTCURLYBRACE
+
+    RIGHTCURLYBRACE shift and go to state 142
+
+
+state 123
+
+    (21) ei_params -> LEFTSMALLBRACKET float_list ei_flag_option . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 143
+
+
+state 124
+
+    (23) float_list -> float_list COMMA . FLOAT
+    (24) float_list -> float_list COMMA . NUMBER
+
+    FLOAT           shift and go to state 144
+    NUMBER          shift and go to state 145
+
+
+state 125
+
+    (27) ei_flag_option -> BAR . IDEN
+
+    IDEN            shift and go to state 146
+
+
+state 126
+
+    (28) ei_flag_option -> empty .
+
+    RIGHTSMALLBRACKET reduce using rule 28 (ei_flag_option -> empty .)
+
+
+state 127
+
+    (50) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA . q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
+    (51) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA . q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+    (68) q_alias_concat_wrap -> . alias_slice
+    (69) q_alias_concat_wrap -> . LEFTSQRBRACKET q_alias_concat RIGHTSQRBRACKET
+    (72) alias_slice -> . ALIAS
+    (73) alias_slice -> . ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    LEFTSQRBRACKET  shift and go to state 97
+    ALIAS           shift and go to state 98
+
+    q_alias_concat_wrap            shift and go to state 147
+    alias_slice                    shift and go to state 96
+
+state 128
+
+    (58) q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA . IDEN RIGHTSMALLBRACKET
+    (59) q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA . NUMBER RIGHTSMALLBRACKET
+
+    IDEN            shift and go to state 148
+    NUMBER          shift and go to state 149
+
+
+state 129
+
+    (69) q_alias_concat_wrap -> LEFTSQRBRACKET q_alias_concat . RIGHTSQRBRACKET
+    (70) q_alias_concat -> q_alias_concat . BAR alias_slice
+
+    RIGHTSQRBRACKET shift and go to state 150
+    BAR             shift and go to state 151
+
+
+state 130
+
+    (71) q_alias_concat -> alias_slice .
+
+    RIGHTSQRBRACKET reduce using rule 71 (q_alias_concat -> alias_slice .)
+    BAR             reduce using rule 71 (q_alias_concat -> alias_slice .)
+
+
+state 131
+
+    (73) alias_slice -> ALIAS LEFTSQRBRACKET . NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    NUMBER          shift and go to state 152
+
+
+state 132
+
+    (53) q_alias_sum_concat_wrap -> LEFTSMALLBRACKET q_alias_sum_concat_wrap_atom . BAR q_alias_sum_concat_wrap RIGHTSMALLBRACKET
+
+    BAR             shift and go to state 153
+
+
+state 133
+
+    (52) q_sum_atom -> q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA . NUMBER RIGHTSMALLBRACKET
+
+    NUMBER          shift and go to state 154
+
+
+state 134
+
+    (54) q_alias_sum_concat_wrap -> q_alias_sum_concat_wrap_atom BAR . q_alias_sum_concat_wrap
+    (53) q_alias_sum_concat_wrap -> . LEFTSMALLBRACKET q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap RIGHTSMALLBRACKET
+    (54) q_alias_sum_concat_wrap -> . q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap
+    (55) q_alias_sum_concat_wrap -> . q_alias_sum_concat_wrap_atom
+    (56) q_alias_sum_concat_wrap_atom -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (57) q_alias_sum_concat_wrap_atom -> . ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    LEFTSMALLBRACKET shift and go to state 99
+    ALIAS           shift and go to state 102
+
+    q_alias_sum_concat_wrap_atom   shift and go to state 101
+    q_alias_sum_concat_wrap        shift and go to state 155
+
+state 135
+
+    (56) q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET . NUMBER RIGHTSQRBRACKET
+    (57) q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET . NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    NUMBER          shift and go to state 156
+
+
+state 136
+
+    (89) a_factor -> LEFTSMALLBRACKET a_expression . RIGHTSMALLBRACKET
+    (81) a_expression -> a_expression . PLUS a_term
+    (82) a_expression -> a_expression . MINUS a_term
+
+    RIGHTSMALLBRACKET shift and go to state 91
+    PLUS            shift and go to state 74
+    MINUS           shift and go to state 75
+
+
+state 137
+
+    (88) a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .
+
+    TIMES           reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    DIVIDE          reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    EQUAL           reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    NOTEQUAL        reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    GREATEREQUAL    reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    GREATER         reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    LESSEQUAL       reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    LESS            reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    PLUS            reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    MINUS           reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    RIGHTSMALLBRACKET reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    OR              reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    AND             reduce using rule 88 (a_factor -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+
+
+state 138
+
+    (30) entity_action -> ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 157
+
+
+state 139
+
+    (32) option_number -> NUMBER .
+
+    RIGHTSMALLBRACKET reduce using rule 32 (option_number -> NUMBER .)
+
+
+state 140
+
+    (33) option_number -> empty .
+
+    RIGHTSMALLBRACKET reduce using rule 33 (option_number -> empty .)
+
+
+state 141
+
+    (31) entity_action -> ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 158
+
+
+state 142
+
+    (29) ei_number -> LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE .
+
+    DOT             reduce using rule 29 (ei_number -> LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE .)
+    ENTITY          reduce using rule 29 (ei_number -> LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE .)
+    ALIAS           reduce using rule 29 (ei_number -> LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE .)
+    QUERY           reduce using rule 29 (ei_number -> LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE .)
+    $end            reduce using rule 29 (ei_number -> LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE .)
+
+
+state 143
+
+    (21) ei_params -> LEFTSMALLBRACKET float_list ei_flag_option RIGHTSMALLBRACKET .
+
+    LEFTCURLYBRACE  reduce using rule 21 (ei_params -> LEFTSMALLBRACKET float_list ei_flag_option RIGHTSMALLBRACKET .)
+
+
+state 144
+
+    (23) float_list -> float_list COMMA FLOAT .
+
+    COMMA           reduce using rule 23 (float_list -> float_list COMMA FLOAT .)
+    BAR             reduce using rule 23 (float_list -> float_list COMMA FLOAT .)
+    RIGHTSMALLBRACKET reduce using rule 23 (float_list -> float_list COMMA FLOAT .)
+
+
+state 145
+
+    (24) float_list -> float_list COMMA NUMBER .
+
+    COMMA           reduce using rule 24 (float_list -> float_list COMMA NUMBER .)
+    BAR             reduce using rule 24 (float_list -> float_list COMMA NUMBER .)
+    RIGHTSMALLBRACKET reduce using rule 24 (float_list -> float_list COMMA NUMBER .)
+
+
+state 146
+
+    (27) ei_flag_option -> BAR IDEN .
+
+    RIGHTSMALLBRACKET reduce using rule 27 (ei_flag_option -> BAR IDEN .)
+
+
+state 147
+
+    (50) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap . COMMA IDEN RIGHTSMALLBRACKET
+    (51) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap . COMMA NUMBER RIGHTSMALLBRACKET
+
+    COMMA           shift and go to state 159
+
+
+state 148
+
+    (58) q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 160
+
+
+state 149
+
+    (59) q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 161
+
+
+state 150
+
+    (69) q_alias_concat_wrap -> LEFTSQRBRACKET q_alias_concat RIGHTSQRBRACKET .
+
+    COMMA           reduce using rule 69 (q_alias_concat_wrap -> LEFTSQRBRACKET q_alias_concat RIGHTSQRBRACKET .)
+
+
+state 151
+
+    (70) q_alias_concat -> q_alias_concat BAR . alias_slice
+    (72) alias_slice -> . ALIAS
+    (73) alias_slice -> . ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    ALIAS           shift and go to state 98
+
+    alias_slice                    shift and go to state 162
+
+state 152
+
+    (73) alias_slice -> ALIAS LEFTSQRBRACKET NUMBER . COLON NUMBER RIGHTSQRBRACKET
+
+    COLON           shift and go to state 163
+
+
+state 153
+
+    (53) q_alias_sum_concat_wrap -> LEFTSMALLBRACKET q_alias_sum_concat_wrap_atom BAR . q_alias_sum_concat_wrap RIGHTSMALLBRACKET
+    (53) q_alias_sum_concat_wrap -> . LEFTSMALLBRACKET q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap RIGHTSMALLBRACKET
+    (54) q_alias_sum_concat_wrap -> . q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap
+    (55) q_alias_sum_concat_wrap -> . q_alias_sum_concat_wrap_atom
+    (56) q_alias_sum_concat_wrap_atom -> . ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+    (57) q_alias_sum_concat_wrap_atom -> . ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+
+    LEFTSMALLBRACKET shift and go to state 99
+    ALIAS           shift and go to state 102
+
+    q_alias_sum_concat_wrap_atom   shift and go to state 101
+    q_alias_sum_concat_wrap        shift and go to state 164
+
+state 154
+
+    (52) q_sum_atom -> q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 165
+
+
+state 155
+
+    (54) q_alias_sum_concat_wrap -> q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap .
+
+    COMMA           reduce using rule 54 (q_alias_sum_concat_wrap -> q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap .)
+    RIGHTSMALLBRACKET reduce using rule 54 (q_alias_sum_concat_wrap -> q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap .)
+
+
+state 156
+
+    (56) q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER . RIGHTSQRBRACKET
+    (57) q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER . COLON NUMBER RIGHTSQRBRACKET
+
+    RIGHTSQRBRACKET shift and go to state 166
+    COLON           shift and go to state 167
+
+
+state 157
+
+    (30) entity_action -> ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET .
+
+    ENTITY          reduce using rule 30 (entity_action -> ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET .)
+    ALIAS           reduce using rule 30 (entity_action -> ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET .)
+    QUERY           reduce using rule 30 (entity_action -> ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET .)
+    $end            reduce using rule 30 (entity_action -> ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET .)
+
+
+state 158
+
+    (31) entity_action -> ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET .
+
+    ENTITY          reduce using rule 31 (entity_action -> ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET .)
+    ALIAS           reduce using rule 31 (entity_action -> ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET .)
+    QUERY           reduce using rule 31 (entity_action -> ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET .)
+    $end            reduce using rule 31 (entity_action -> ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET .)
+
+
+state 159
+
+    (50) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA . IDEN RIGHTSMALLBRACKET
+    (51) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA . NUMBER RIGHTSMALLBRACKET
+
+    IDEN            shift and go to state 169
+    NUMBER          shift and go to state 168
+
+
+state 160
+
+    (58) q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET .
+
+    RIGHTSMALLBRACKET reduce using rule 58 (q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET .)
+    OR              reduce using rule 58 (q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET .)
+    AND             reduce using rule 58 (q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET .)
+
+
+state 161
+
+    (59) q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .
+
+    RIGHTSMALLBRACKET reduce using rule 59 (q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .)
+    OR              reduce using rule 59 (q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .)
+    AND             reduce using rule 59 (q_equal_atom_2 -> q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .)
+
+
+state 162
+
+    (70) q_alias_concat -> q_alias_concat BAR alias_slice .
+
+    RIGHTSQRBRACKET reduce using rule 70 (q_alias_concat -> q_alias_concat BAR alias_slice .)
+    BAR             reduce using rule 70 (q_alias_concat -> q_alias_concat BAR alias_slice .)
+
+
+state 163
+
+    (73) alias_slice -> ALIAS LEFTSQRBRACKET NUMBER COLON . NUMBER RIGHTSQRBRACKET
+
+    NUMBER          shift and go to state 170
+
+
+state 164
+
+    (53) q_alias_sum_concat_wrap -> LEFTSMALLBRACKET q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 171
+
+
+state 165
+
+    (52) q_sum_atom -> q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .
+
+    RIGHTSMALLBRACKET reduce using rule 52 (q_sum_atom -> q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .)
+    OR              reduce using rule 52 (q_sum_atom -> q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .)
+    AND             reduce using rule 52 (q_sum_atom -> q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .)
+
+
+state 166
+
+    (56) q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .
+
+    BAR             reduce using rule 56 (q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    COMMA           reduce using rule 56 (q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+    RIGHTSMALLBRACKET reduce using rule 56 (q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET .)
+
+
+state 167
+
+    (57) q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER COLON . NUMBER RIGHTSQRBRACKET
+
+    NUMBER          shift and go to state 172
+
+
+state 168
+
+    (51) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 173
+
+
+state 169
+
+    (50) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN . RIGHTSMALLBRACKET
+
+    RIGHTSMALLBRACKET shift and go to state 174
+
+
+state 170
+
+    (73) alias_slice -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER . RIGHTSQRBRACKET
+
+    RIGHTSQRBRACKET shift and go to state 175
+
+
+state 171
+
+    (53) q_alias_sum_concat_wrap -> LEFTSMALLBRACKET q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap RIGHTSMALLBRACKET .
+
+    COMMA           reduce using rule 53 (q_alias_sum_concat_wrap -> LEFTSMALLBRACKET q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap RIGHTSMALLBRACKET .)
+    RIGHTSMALLBRACKET reduce using rule 53 (q_alias_sum_concat_wrap -> LEFTSMALLBRACKET q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap RIGHTSMALLBRACKET .)
+
+
+state 172
+
+    (57) q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER . RIGHTSQRBRACKET
+
+    RIGHTSQRBRACKET shift and go to state 176
+
+
+state 173
+
+    (51) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .
+
+    RIGHTSMALLBRACKET reduce using rule 51 (q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .)
+    OR              reduce using rule 51 (q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .)
+    AND             reduce using rule 51 (q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET .)
+
+
+state 174
+
+    (50) q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET .
+
+    RIGHTSMALLBRACKET reduce using rule 50 (q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET .)
+    OR              reduce using rule 50 (q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET .)
+    AND             reduce using rule 50 (q_equal_atom_3 -> q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET .)
+
+
+state 175
+
+    (73) alias_slice -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET .
+
+    COMMA           reduce using rule 73 (alias_slice -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET .)
+    RIGHTSQRBRACKET reduce using rule 73 (alias_slice -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET .)
+    BAR             reduce using rule 73 (alias_slice -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET .)
+
+
+state 176
+
+    (57) q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET .
+
+    BAR             reduce using rule 57 (q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET .)
+    COMMA           reduce using rule 57 (q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET .)
+    RIGHTSMALLBRACKET reduce using rule 57 (q_alias_sum_concat_wrap_atom -> ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET .)
+

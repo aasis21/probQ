@@ -1,18 +1,18 @@
 from ply import yacc
-import os,sys,time
-
+import probQlexer.lexer as lexer
 from collections import OrderedDict as odict
-from probQlexer.lexer import lexer
-from probQlexer.lexer import tokens as lexTokens
 from probQsolver.solver import blackbox , QNode
+import os
+import sys
+import time
 
-tokens = lexTokens
+tokens = lexer.tokens
 
 solver = blackbox()
 
-precedence = (
+precedence = (                                                                     
     ('left', 'PLUS', 'MINUS'),
-    ('left', 'AND', 'OR', 'NOT')
+    ('left', 'NOT', 'AND', 'OR')
 
 )
 
@@ -27,8 +27,12 @@ _entity = {
 }
 _alias = {}
 
+_entity_def_list = []                                                           #initialising lists
 
-def p_program(p):
+for key,value in _entity.items(): 
+    solver.add_entity(value)
+# format of program
+def p_program(p):                                                           
     '''program : program statement '''
     p[1] += [p[2]]
     p[0] = p[1]
@@ -80,10 +84,12 @@ def p_entity_def(p):
         default.append(value)
 
     p[0] = {'entity': p[2], 'feature' : p[3]['feature'],'p_default': default }
-    if float(p[3]['sum']) > 1:
-        print("WARNING: Sum of probability greater than one! ", p.lineno(3))
+    if float(p[3]['sum']) > 1.005:                                                                 # sum of prob <1
+        print("WARNING: Sum of probability is greater than one! ", p.lineno(3))
+    if float(p[3]['sum']) < 0.995:                                                                 # sum of prob <=1
+        print("WARNING: Sum of probability is less than one! ", p.lineno(3))    
     if p[2] in _entity:
-        print("This entity is already defined, this will be rejected")
+        print("This entity is already defined, this will be rejected")                           
     else:
         solver.add_entity(p[0])
         _entity[p[2]] =  p[0]
@@ -119,37 +125,37 @@ def p_entity_def(p):
 #
 #     ############ ---------------------------------------------------------------
 
-def p_ed_feature(p):
+def p_ed_feature(p):                                                                        #(iden @ number ; iden @ number)
     ''' ed_feature : LEFTSMALLBRACKET ed_feature_inner RIGHTSMALLBRACKET'''
     p[0] = p[2]
 
-def p_ed_feature_inner(p):
+def p_ed_feature_inner(p):                                                                  #iden @ number ; iden @ number
     ''' ed_feature_inner : entity_prop_prob '''
     p[0] = p[1]
 
-def p_entity_prop_prob(p):
+def p_entity_prop_prob(p):                                                       #NUMBER :: iden @ number;NUMBER :: iden @ number
     ''' entity_prop_prob : entity_prop_prob SEMICOLON entity_prop_prob_atom '''
     p[1]['feature'].update(p[3]['feature'])
     p[1]['sum'] = float(p[1]['sum']) + float(p[3]['sum'])
     p[0] = p[1]
 
-def p_entity_prop_prob_single(p):
+def p_entity_prop_prob_single(p):                                                #NUMBER :: iden @ number
     ''' entity_prop_prob : entity_prop_prob_atom '''
     p[0] = p[1]
 
-def p_entity_prop_prob_atom(p):
+def p_entity_prop_prob_atom(p):                                                         #NUMBER :: iden @ number                                          
     ''' entity_prop_prob_atom : IDEN
                              | NUMBER
     '''
     p[0] = { 'feature' : odict([(p[1],0)]) , 'sum' : 0 }
 
-def p_entity_prop_prob_atom_n(p):
-    ''' entity_prop_prob_atom : NUMBER DOUBLECOLON IDEN
+def p_entity_prop_prob_atom_n(p):                                                       # NUMBER :: iden @ number
+    ''' entity_prop_prob_atom : NUMBER DOUBLECOLON IDEN                                
                              | NUMBER DOUBLECOLON NUMBER
     '''
     p[0] = { 'feature' : odict([(p[3],p[1])]), 'sum' : p[1] }
 
-def p_entity_prop_prob_atom_f(p):
+def p_entity_prop_prob_atom_f(p):                                                       #  float :: iden @ number
     ''' entity_prop_prob_atom : FLOAT DOUBLECOLON IDEN
                              | FLOAT DOUBLECOLON NUMBER
     '''
@@ -159,16 +165,17 @@ def p_entity_prop_prob_atom_f(p):
 ################################################################################
 ############################  ENTITY Initialize   ##############################
 ################################################################################
-def p_entity_initialize_wrap(p):
+def p_entity_initialize_wrap(p):                                    #ALIAS =IDEN (float, float ,float |iden){number}
     ''' entity_initialize_wrap : ALIAS ASSIGNMENT entity_initialize '''
     alias = {'id': p[1], 'type' : 'entity_instance', 'instance': p[3]}
+    global _alias
     if p[1] in _alias:
         print("Alias already exist", p.lineno(1))
     else:
         solver.add_entity_instance(p[3])
         _alias[p[1]] = alias
 
-def p_entity_initialize(p):
+def p_entity_initialize(p):                                   # IDEN (float, float ,float |iden){number}
     ''' entity_initialize : IDEN ei_params ei_number '''
     if p[1] in _entity:
         entity = _entity[p[1]]
@@ -186,28 +193,28 @@ def p_entity_initialize(p):
         print(_entity)
         print("entity not defined")
 
-def p_ei_params(p):
+def p_ei_params(p):                                                 #(float, float ,float |iden)
     ''' ei_params : LEFTSMALLBRACKET  float_list ei_flag_option  RIGHTSMALLBRACKET '''
     p[0] = {'flag' : p[3], 'params': p[2]}
 
-def p_ei_params_empty(p):
+def p_ei_params_empty(p):                                           
     ''' ei_params : empty '''
     p[0] = {'flag':'empty', 'params' : [] }
 
-def p_float_list(p):
+def p_float_list(p):                                            # float, float ,float
     ''' float_list :  float_list COMMA FLOAT
                     | float_list COMMA NUMBER
     '''
     p[1] += [p[3]]
     p[0] = p[1]
 
-def p_float_list_single(p):
+def p_float_list_single(p):                                          #float @ number   
     ''' float_list : FLOAT
                    | NUMBER
     '''
     p[0] = [ p[1] ]
 
-def p_ei_flag(p):
+def p_ei_flag(p):                                                      # |iden
     ''' ei_flag_option : BAR IDEN
                         | empty
     '''
@@ -216,14 +223,14 @@ def p_ei_flag(p):
     else:
         p[0] = "f"
 
-def p_ei_number(p):
+def p_ei_number(p):                                                        #{number}
     ''' ei_number : LEFTCURLYBRACE NUMBER RIGHTCURLYBRACE '''
     p[0] = p[2]
 
 ################################################################################
 ############################     ENTITY Action    ##############################
 ################################################################################
-def p_entity_action(p):                                                         
+def p_entity_action(p):
     ''' entity_action : ALIAS ASSIGNMENT ALIAS DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET
     '''
     if p[1] in _alias:
@@ -241,7 +248,7 @@ def p_entity_action(p):
             print("wrong alias",p.lineno(3))
 
 
-def p_entity_action_e(p):
+def p_entity_action_e(p):                                                                      # ALIAS = IDEN (float, float ,float |iden){number}.ROLL{NUMBER}
     ''' entity_action : ALIAS ASSIGNMENT entity_initialize DOT ROLL LEFTSMALLBRACKET option_number RIGHTSMALLBRACKET '''
     if p[1] in _alias:
         print("Alias already exist", p.lineno(1))
@@ -259,7 +266,7 @@ def p_option_number(p):
     ''' option_number : NUMBER '''
     p[0] = p[1]
 
-def p_option_number_wo(p):
+def p_option_number_wo(p):                                                                      #default 1
     ''' option_number : empty '''
     p[0] = 1
 
@@ -269,7 +276,7 @@ def p_option_number_wo(p):
 ################################################################################
 
 
-def p_query_wrap(p):
+def p_query_wrap(p):                                                                            #QUERY ()
     ''' query_wrap : QUERY LEFTSMALLBRACKET q_expr RIGHTSMALLBRACKET '''
     solver.add_query(p[3])
 
@@ -291,7 +298,7 @@ def p_q_expr_s(p):
     ''' q_expr : q_term '''
     p[0] = p[1]
 
-def p_q_term(p):
+def p_q_term(p):                                        
     ''' q_term : q_factor_list AND q_factor '''
     root = QNode("and","and")
     for e_ch in p[1]:
@@ -345,7 +352,8 @@ def p_q_atom(p):
 
 ################################ Keep  adding new atom here ####################
 
-def p_q_equal_atom4(p):                                                                             #equal(number,X|Y,iden)
+
+def p_q_equal_atom3(p):         #equal (3,X,s)
     ''' q_equal_atom_3 : q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
                         | q_iden_3 LEFTSMALLBRACKET NUMBER COMMA q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
     '''
@@ -357,16 +365,62 @@ def p_q_equal_atom4(p):                                                         
                   }
     p[0] = {'type': 'nl', 'body' :query_atom}
 
-def p_q_sum_atom(p):                                                                                #sum(X|Y|Z,3)
-    ''' q_sum_atom : q_sum LEFTSMALLBRACKET q_alias_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+def p_q_sum(p):                  #   sum(X,3)
+    ''' q_sum_atom : q_sum LEFTSMALLBRACKET q_alias_sum_concat_wrap COMMA NUMBER RIGHTSMALLBRACKET
+                        
     '''
 
-    query_atom = {'construct' : p[1],'params_count' : 3 ,'number':p[3] , 'equal' : p[7],
-                  'alias_list' : p[5]['alias_list'],
-                  'list' : p[5]['list'] ,
-                  'list_len' : p[5]['list_len']
+    query_atom = {'construct' : p[1],'params_count' : 2 ,'number':1 , 'equal' : p[5],
+                  'alias_list' : p[3]['alias_list'],
+                  'list' : p[3]['list'] ,
+                  'list_len' : p[3]['list_len']
                   }
     p[0] = {'type': 'nl', 'body' :query_atom}
+
+def p_q_alias_sum_concat_wrap(p):#ALIAS[0,3]|
+    '''
+    q_alias_sum_concat_wrap : LEFTSMALLBRACKET q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap RIGHTSMALLBRACKET
+                            | q_alias_sum_concat_wrap_atom BAR q_alias_sum_concat_wrap
+                            | q_alias_sum_concat_wrap_atom
+
+    '''
+    size = len(p)
+    if size == 4:
+        l = p[3]['list'] + ' + ' + p[1]['list']
+        a_list = p[3]['alias_list'] + [p[1]['name']]
+        a_len = p[3]['list_len'] + p[1]['len']
+        p[0] = {'list': l , 'alias_list' : a_list, 'list_len': a_len }
+    if size == 6:
+        l = p[2]['list'] + ' + ' + p[4]['list']
+        a_list = p[4]['alias_list'] + [p[2]['name']]
+        a_len = p[4]['list_len'] + p[2]['len']
+        p[0] = {'list': l , 'alias_list' : a_list, 'list_len': a_len }
+    
+
+
+    elif size == 2:
+        p[0] = {'list': p[1]['list'], 'alias_list' : [p[1]['name']], 'list_len' : p[1]['len'] }
+
+
+def p_q_alias_sum_concat_wrap_atom(p):  #ALIAS[0,3]|
+    '''
+    q_alias_sum_concat_wrap_atom : ALIAS LEFTSQRBRACKET NUMBER RIGHTSQRBRACKET
+                                 | ALIAS LEFTSQRBRACKET NUMBER COLON NUMBER RIGHTSQRBRACKET
+    '''
+    alias = _alias[p[1]]
+    a_name = str(p[1])
+    if len(p) == 5:
+        res = ''
+        a_len = alias['length']
+        for i in range(int(p[3]), int(p[3])+1 ):
+            res = res + a_name + str(i) + '+ '
+    if len(p) == 7:
+        res = ''
+        a_len = int(p[5]) - int(p[3]) + 1
+        for i in range(int(p[3]), int(p[5])+1):
+            res = res + a_name + str(i) + '+ '
+    res = res.strip('+ ')
+    p[0] = {'list' : res, 'name' : a_name, 'len' : a_len }
 
 def p_q_equal_atom2(p):
     ''' q_equal_atom_2 : q_iden_2 LEFTSMALLBRACKET q_alias_concat_wrap COMMA IDEN RIGHTSMALLBRACKET
@@ -379,10 +433,11 @@ def p_q_equal_atom2(p):
                   }
     p[0] = {'type': 'nl', 'body' :query_atom}
 
-def p_query_sum(p):
-    ''' q_sum : SUMATMOST
-                | SUMATLEAST
-                | SUM '''
+def p_q_sum_atom(p):
+    ''' q_sum : SUM 
+              | SUMATLEAST
+              | SUMATMOST
+                '''
     p[0] = p[1]
 
 def p_query_iden_3(p):
@@ -517,14 +572,15 @@ def p_error(p):
    print("Syntax error in input!", p)
 
 
-def getSolver(data, debug=0):
-    probQparser = yacc.yacc()
+
+# Catastrophic erro-r handler
+
+probQparser = yacc.yacc()
+
+
+def parse(data, debug=0):
     probQparser.error = 0
-    # declare pre-existing stuffs
-    for key,value in _entity.items():
-        solver.add_entity(value)
-
-    # start parsing with lexer from probQlexer
-    p = probQparser.parse(data,lexer = lexer,debug=debug )
-
-    return solver
+    p = probQparser.parse(data, debug=debug)
+    if probQparser.error:
+        return None
+    return p

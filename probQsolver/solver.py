@@ -26,6 +26,7 @@ def get_entity_layout(entity):
         e_action_layout_atom = e_action_layout_atom + ', ' + new_p
         e_iden_layout = e_iden_layout + ', ' + new_p
 
+
     e_action_layout_atom = e_action_layout_atom + ', D'
     e_iden_layout = e_iden_layout + ', D)'
     entity_layout = ''
@@ -130,6 +131,7 @@ def q_add_atom(q_atom,q_alias):
 
     if q_type == 'me':
         query = '( ' + body + ' )'
+        #print(body)
         # to do parse body to get alias list
         return query
     elif q_type == 'nl':
@@ -140,21 +142,35 @@ def q_add_atom(q_atom,q_alias):
         equal = body['equal']
 
         iden = str(randint(1000,9999))
-        query = '( count([{}],{}, C{})'.format(body['list'],equal,iden)
+        query = ''
+        
         if construct == 'equalAtmost':
+            query = '( count([{}],{}, C{})'.format(body['list'],equal,iden)    
             query = query + ' , C{} =< {} )'.format(iden, num)
+        if construct == 'sum' :
+
+            query = query + ' ( {} =:= {} )'.format(body['list'],equal)
+        if construct == 'sumAtmost' :
+
+            query = query + ' ,( {} >= {} )'.format(body['list'],equal)
+        if construct == 'sumAtleast' :
+
+            query = query + ' , ({} <= {} )'.format(body['list'],equal)
         if construct == 'equalAtleast':
+            query = '( count([{}],{}, C{})'.format(body['list'],equal,iden)
             query = query + ' , C{} >= {} )'.format(iden,num)
         if construct == 'equalFew':
+            query = '( count([{}],{}, C{})'.format(body['list'],equal,iden)
             query = query + ' , C{} = {} )'.format(iden,num)
         if construct == 'equalAll':
+            query = '( count([{}],{}, C{})'.format(body['list'],equal,iden)
             query = query + ' , C{} = {} )'.format(iden,body['list_len'])
         if construct == 'equalAny':
+            query = '( count([{}],{}, C{})'.format(body['list'],equal,iden)
             query = query + ' , C{} >= 1 )'.format(iden)
 
         alias_list = body['alias_list']
         q_alias += alias_list
-
         return query
 
 
